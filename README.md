@@ -1,66 +1,136 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# ERP Heladería Nieve Real (Laravel 11 + Vue 3 SPA + MySQL 8)
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Sistema integral tipo ERP y Punto de Venta (POS) para heladería de local único, diseñado con arquitectura limpia desacoplada (Laravel API REST + Vue 3 SPA con Pinia y Tailwind CSS).
 
-## About Laravel
+---
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## 1. Requisitos del Sistema
+- **PHP**: 8.2 o superior (probado en PHP 8.5)
+- **Composer**: 2.x
+- **Node.js**: 18+ y NPM
+- **Base de Datos**: MySQL 8.x o MariaDB 10.4+
+- **Extensiones PHP**: `pdo_mysql`, `bcmath`, `gd` o `imagick`, `mbstring`, `fileinfo`
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+---
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+## 2. Instrucciones de Instalación Rápida
 
-## Learning Laravel
+### Paso 1: Clonar o posicionarse en el proyecto
+```bash
+cd erp
+```
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+### Paso 2: Instalar dependencias de PHP y Node
+```bash
+composer install
+npm install
+```
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+### Paso 3: Configurar variables de entorno (.env)
+Copiar el archivo de configuración:
+```bash
+copy .env.example .env
+php artisan key:generate
+```
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+Asegurar los parámetros de conexión en `.env`:
+```env
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=icecream_erp
+DB_USERNAME=root
+DB_PASSWORD=
+DB_COLLATION=utf8mb4_unicode_ci
 
-## Laravel Sponsors
+# Facturación: 'internal' para ticket térmico DomPDF o 'dian' para facturación electrónica Colombia
+BILLING_MODE=internal
+DIAN_API_URL=https://api.dian.gov.co/mock
+DIAN_API_TOKEN=mock_token_123
+```
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+Crear el enlace de almacenamiento simbólico para los PDFs de facturas:
+```bash
+php artisan storage:link
+```
 
-### Premium Partners
+### Paso 4: Ejecutar Migraciones y Datos de Prueba (Seeders)
+```bash
+php artisan migrate:fresh --seed
+```
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[WebReinvent](https://webreinvent.com/)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Jump24](https://jump24.co.uk)**
-- **[Redberry](https://redberry.international/laravel/)**
-- **[Active Logic](https://activelogic.com)**
-- **[byte5](https://byte5.de)**
-- **[OP.GG](https://op.gg)**
+### Paso 5: Compilar el Frontend o Servir en Desarrollo
+Para producción:
+```bash
+npm run build
+```
 
-## Contributing
+Para desarrollo con Hot-Reload (Vite):
+```bash
+# Terminal 1: Servir Laravel
+php artisan serve
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+# Terminal 2: Vite Dev Server
+npm run dev
+```
 
-## Code of Conduct
+---
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+## 3. Usuarios y Credenciales Preconfiguradas
 
-## Security Vulnerabilities
+Todos los usuarios cuentan con la contraseña genérica: `password`
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+| Rol | Correo Electrónico | Contraseña | Permisos Principales |
+|---|---|---|---|
+| **Administrador** | `admin@heladeria.com` | `password` | Acceso total: POS, Catálogo, Caja, Finanzas/Reportes, Configuración DIAN |
+| **Cajero** | `cajero@heladeria.com` | `password` | POS, Cobro/Facturación, Apertura/Cierre de Turnos de Caja Menor, Inventario |
+| **Mesero** | `mesero@heladeria.com` | `password` | Mapa de Mesas del Salón, Toma y Edición de Comandas, Venta para Llevar |
+| **Cocina / Barra** | `cocina@heladeria.com` | `password` | Monitoreo de pedidos en cocina y cambio de estado a entregado |
 
-## License
+---
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+## 4. Módulos y Características
+
+### A. Autenticación y Permisos
+- Tokens Bearer con **Laravel Sanctum**.
+- Roles y permisos granulares con **Spatie Laravel-Permission** (`admin`, `cashier`, `waiter`, `kitchen`).
+
+### B. Catálogo e Inventario
+- Categorías (Helados tradicionales, gourmet, copas especiales, bebidas, potes y toppings).
+- Productos con variantes de tamaño (1 bola, 2 bolas, 3 bolas, 1/2 litro, 1 litro).
+- Alertas visuales de stock bajo según umbral mínimo (`min_stock_alert`).
+- Descuento automático de stock al confirmar comanda y reversión automática si se cancela.
+
+### C. Mesas y Comandas (POS)
+- Mapa visual de salón (8 mesas preconfiguradas con capacidades y código de colores: Verde = Libre, Naranja = Ocupada, Azul = Reservada).
+- Drawer lateral de comanda con catálogo por categorías y notas por producto.
+- Acceso rápido para "Venta para Llevar / Mostrador" (sin mesa asignada).
+
+### D. Facturación Dual (Interna & DIAN UBL 2.1)
+- **Modo Interno (`internal`)**: Consecutivo automático correlativo (`FAC-0001`), renderizado de ticket térmico en PDF de 80mm con **DomPDF**, descarga e impresión directa.
+- **Modo DIAN (`dian`)**: Cálculo criptográfico de **CUFE** (SHA-384), estructura UBL 2.1 con emisor, adquirente y líneas formateadas, listo para conectar a API de proveedores tecnológicos autorizados (Factus, Siigo, Alegra) a través de `DianInvoiceProvider`.
+- Medios de pago múltiples (efectivo con calculadora de cambio, tarjetas, transferencias) y división equitativa de cuenta.
+
+### E. Turnos de Caja & Arqueo
+- Apertura con saldo base en gaveta.
+- Registro de gastos menores operativos, compras urgentes de insumos y nómina.
+- Cierre ciego/supervisado con cálculo automático de diferencia (faltante o sobrante).
+
+### F. Analítica y Reportes Financieros
+- KPIs de ventas totales, ticket promedio, margen bruto estimado (ventas - costos de mercadería) y flujo neto.
+- Ranking de los 5 helados/productos más vendidos por volumen y recaudación.
+- Desglose gráfico por método de pago.
+
+---
+
+## 5. Pruebas Automatizadas
+Ejecuta la suite completa de Feature Tests:
+```bash
+php artisan test
+```
+Incluye pruebas para:
+- `AuthenticationTest`: Validación de login y protección de rutas.
+- `ProductInventoryTest`: Manejo de variantes y cálculo de stock.
+- `OrderFlowTest`: Ciclo de vida y transición de mesas.
+- `InvoicingProviderTest`: Generación de PDF térmico y cálculo de CUFE DIAN.
+- `CashRegisterTest`: Balance de apertura, gastos y cálculo de descuadre en cierre.
