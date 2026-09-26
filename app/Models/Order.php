@@ -50,4 +50,9 @@ class Order extends Model
     {
         return $this->hasOne(Invoice::class);
     }
+
+    public static function todayCount(): int
+    {
+        return static::whereDate('created_at', today())->count();
+    }
 }
