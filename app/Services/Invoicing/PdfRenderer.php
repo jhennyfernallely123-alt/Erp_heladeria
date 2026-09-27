@@ -24,10 +24,18 @@ class PdfRenderer
     /** Ancho y alto de la factura en pulgadas (A4 vertical con margen). */
     private const INVOICE_FORMAT = 'a4';
 
-    /** Rollo termico de 80mm: ancho real util mas el area del marge. */
-    private const TICKET_WIDTH_MM = 57;
+    /** Rollo termico de 80mm. */
+    private const TICKET_WIDTH_MM = 80;
 
     private const TICKET_HEIGHT_MM = 200;
+
+    /**
+     * Margenes del ticket en mm. Las impressoras termicas de 80mm no imprimen
+     * los primeros 3-4mm de cada lado, asi que se reservan aqui en vez de
+     * confiar en el margen por defecto de DOMPDF (12mm por lado, que se comia
+     * casi la mitad del rollo y desbordaba la plantilla).
+     */
+    private const TICKET_MARGINS_MM = [3, 3, 4, 3];
 
     public function businessSettings(): array
     {
@@ -87,6 +95,13 @@ class PdfRenderer
         ])
             ->driver('dompdf')
             ->paperSize(self::TICKET_WIDTH_MM, self::TICKET_HEIGHT_MM, 'mm')
+            ->margins(
+                self::TICKET_MARGINS_MM[0],
+                self::TICKET_MARGINS_MM[1],
+                self::TICKET_MARGINS_MM[2],
+                self::TICKET_MARGINS_MM[3],
+                'mm'
+            )
             ->disk('public')
             ->save($fileName);
 

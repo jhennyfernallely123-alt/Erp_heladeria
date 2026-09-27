@@ -10,8 +10,8 @@
             line-height: 1.3;
             color: #111;
             margin: 0;
-            padding: 5px;
-            width: 72mm;
+            padding: 0;
+            width: 100%;
         }
         .text-center { text-align: center; }
         .text-right { text-align: right; }
