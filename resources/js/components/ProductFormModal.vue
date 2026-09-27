@@ -6,7 +6,7 @@
         size="lg"
         @close="emit('close')"
     >
-        <div class="flex gap-1 p-1 bg-slate-100 rounded-xl mb-5">
+        <div class="flex gap-1 p-1 bg-aguamarina-50 rounded-xl mb-5">
             <button
                 v-for="tab in tabs"
                 :key="tab.id"
@@ -14,8 +14,8 @@
                 class="flex-1 px-3 py-2 rounded-lg text-xs font-semibold transition"
                 :class="
                     activeTab === tab.id
-                        ? 'bg-white text-slate-900 shadow-sm'
-                        : 'text-slate-500 hover:text-slate-700'
+                        ? 'bg-white text-petrol-800 shadow-sm'
+                        : 'text-niebla-400 hover:text-petrol-700'
                 "
                 @click="activeTab = tab.id"
             >
@@ -25,10 +25,10 @@
 
         <div v-if="activeTab === 'data'" class="space-y-4">
             <div>
-                <p class="text-xs font-semibold text-slate-700 mb-1.5">Imagen del producto</p>
+                <p class="text-xs font-semibold text-petrol-700 mb-1.5">Imagen del producto</p>
                 <div class="flex items-center gap-4">
                     <div
-                        class="h-20 w-20 rounded-xl overflow-hidden bg-slate-100 border border-slate-200 flex items-center justify-center shrink-0"
+                        class="h-20 w-20 rounded-xl overflow-hidden bg-aguamarina-50 border border-aguamarina-100 flex items-center justify-center shrink-0"
                     >
                         <img
                             v-if="imagePreview"
@@ -36,8 +36,8 @@
                             alt="Vista previa"
                             class="h-full w-full object-cover"
                         />
-                        <AppIcon v-else-if="form.image" :name="Package" :size="26" class="text-slate-400" />
-                        <AppIcon v-else :name="ImagePlus" :size="26" class="text-slate-400" />
+                        <AppIcon v-else-if="form.image" :name="Package" :size="26" class="text-niebla-300" />
+                        <AppIcon v-else :name="ImagePlus" :size="26" class="text-niebla-300" />
                     </div>
                     <div class="space-y-2">
                         <input
@@ -54,7 +54,7 @@
                             :icon="Upload"
                             @click="fileInput.click()"
                         />
-                        <p class="text-[11px] text-slate-500">JPG, PNG o WEBP. Máximo 2MB.</p>
+                        <p class="text-[11px] text-niebla-400">JPG, PNG o WEBP. Máximo 2MB.</p>
                     </div>
                 </div>
                 <p v-if="errors.image" class="text-xs text-rose-600 mt-1.5">{{ errors.image[0] }}</p>
@@ -98,9 +98,9 @@
                     :error="firstError('cost_price')"
                 />
                 <div class="space-y-1.5">
-                    <p class="text-xs font-semibold text-slate-700">Margen estimado</p>
+                    <p class="text-xs font-semibold text-petrol-700">Margen estimado</p>
                     <div
-                        class="rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-2.5 text-sm font-semibold"
+                        class="rounded-xl border border-aguamarina-100 bg-aguamarina-50 px-3.5 py-2.5 text-sm font-semibold"
                         :class="marginClass"
                     >
                         {{ marginLabel }}
@@ -119,9 +119,9 @@
                 <input
                     v-model="form.is_active"
                     type="checkbox"
-                    class="w-4 h-4 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500"
+                    class="w-4 h-4 rounded border-aguamarina-200 text-aguamarina-600 focus:ring-aguamarina-500"
                 />
-                <span class="text-sm text-slate-700">Producto activo</span>
+                <span class="text-sm text-petrol-700">Producto activo</span>
             </label>
         </div>
 
@@ -129,13 +129,13 @@
             <div
                 v-for="(variant, index) in form.variants"
                 :key="index"
-                class="rounded-xl border border-slate-200 p-4 space-y-3"
+                class="rounded-xl border border-aguamarina-100 p-4 space-y-3"
             >
                 <div class="flex items-center justify-between">
-                    <p class="text-xs font-semibold text-slate-700">Variante {{ index + 1 }}</p>
+                    <p class="text-xs font-semibold text-petrol-700">Variante {{ index + 1 }}</p>
                     <button
                         type="button"
-                        class="p-1.5 rounded-lg text-slate-400 hover:bg-rose-50 hover:text-rose-600"
+                        class="p-1.5 rounded-lg text-niebla-300 hover:bg-rose-50 hover:text-rose-600"
                         :aria-label="`Quitar variante ${index + 1}`"
                         @click="removeVariant(index)"
                     >
@@ -253,7 +253,7 @@ watch(
 );
 
 const margin = computed(() => Number(form.sale_price || 0) - Number(form.cost_price || 0));
-const marginClass = computed(() => (margin.value > 0 ? 'text-emerald-700' : 'text-slate-500'));
+const marginClass = computed(() => (margin.value > 0 ? 'text-emerald-700' : 'text-niebla-400'));
 
 const marginLabel = computed(() => {
     const sale = Number(form.sale_price || 0);

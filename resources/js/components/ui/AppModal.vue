@@ -8,18 +8,18 @@
         >
             <div
                 v-if="open"
-                class="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto bg-slate-900/50 p-4 sm:p-6"
+                class="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto bg-petrol-800/50 p-4 sm:p-6"
                 @click.self="emit('close')"
             >
                 <div class="w-full bg-white rounded-2xl shadow-2xl my-8" :class="sizes[size]">
                     <div class="flex items-start justify-between gap-4 px-6 pt-5 pb-4 border-b border-slate-100">
                         <div>
-                            <h2 class="text-base font-bold text-slate-900">{{ title }}</h2>
-                            <p v-if="subtitle" class="text-xs text-slate-500 mt-0.5">{{ subtitle }}</p>
+                            <h2 class="text-base font-bold text-petrol-800">{{ title }}</h2>
+                            <p v-if="subtitle" class="text-xs text-niebla-400 mt-0.5">{{ subtitle }}</p>
                         </div>
                         <button
                             type="button"
-                            class="p-1.5 rounded-lg text-slate-400 hover:bg-slate-100 hover:text-slate-600 transition"
+                            class="p-1.5 rounded-lg text-niebla-300 hover:bg-aguamarina-50 hover:text-petrol-600 transition"
                             aria-label="Cerrar"
                             @click="emit('close')"
                         >
@@ -31,7 +31,7 @@
                     </div>
                     <div
                         v-if="$slots.footer"
-                        class="px-6 py-4 bg-slate-50 rounded-b-2xl border-t border-slate-100"
+                        class="px-6 py-4 bg-aguamarina-50 rounded-b-2xl border-t border-slate-100"
                     >
                         <slot name="footer" />
                     </div>

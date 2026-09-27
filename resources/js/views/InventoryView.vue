@@ -11,7 +11,7 @@
                 label="Productos en inventario"
                 :value="inventoryStore.stats.total_products"
                 :icon="Boxes"
-                tone="indigo"
+                tone="aguamarina"
             />
             <StatCard
                 label="Unidades en stock"
@@ -34,7 +34,7 @@
         </div>
 
         <div
-            class="bg-white rounded-2xl border border-slate-200 shadow-sm p-4 flex flex-wrap items-center gap-3"
+            class="bg-white rounded-2xl border border-aguamarina-100 shadow-sm p-4 flex flex-wrap items-center gap-3"
         >
             <div class="flex-1 min-w-[220px]">
                 <AppInput v-model="search" placeholder="Buscar producto" :icon="Search" />
@@ -77,21 +77,21 @@
                 <tr
                     v-for="row in paged"
                     :key="row.id"
-                    class="transition-colors hover:bg-slate-50"
+                    class="transition-colors hover:bg-aguamarina-50"
                     :class="row.status === 'critical' ? 'bg-rose-50/40' : ''"
                 >
                     <td class="p-3.5">
                         <div class="flex items-center gap-3">
                             <div
-                                class="h-10 w-10 rounded-lg bg-slate-100 border border-slate-200 flex items-center justify-center shrink-0"
+                                class="h-10 w-10 rounded-lg bg-aguamarina-50 border border-aguamarina-100 flex items-center justify-center shrink-0"
                             >
                                 <AppIcon
                                     :name="categoryIcon(row)"
                                     :size="20"
-                                    class="text-slate-400"
+                                    class="text-niebla-300"
                                 />
                             </div>
-                            <p class="text-sm font-semibold text-slate-800 truncate">
+                            <p class="text-sm font-semibold text-petrol-700 truncate">
                                 {{ row.product?.name }}
                             </p>
                         </div>
@@ -100,15 +100,15 @@
                         <AppBadge :label="row.product?.category?.name || 'Sin categoría'" />
                     </td>
                     <td class="p-3.5">
-                        <span v-if="row.variant" class="text-sm text-slate-700">
+                        <span v-if="row.variant" class="text-sm text-petrol-700">
                             {{ row.variant.name }}
                         </span>
                         <AppBadge v-else label="Producto base" />
                     </td>
-                    <td class="p-3.5 text-right font-semibold text-slate-800">
+                    <td class="p-3.5 text-right font-semibold text-petrol-700">
                         {{ formatQuantity(row) }}
                     </td>
-                    <td class="p-3.5 text-right text-slate-500">{{ formatNumber(row.min_alert) }}</td>
+                    <td class="p-3.5 text-right text-niebla-400">{{ formatNumber(row.min_alert) }}</td>
                     <td class="p-3.5 text-center">
                         <AppBadge :tone="statusTone(row.status)" dot :label="statusLabel(row.status)" />
                     </td>
@@ -116,7 +116,7 @@
                         <div class="flex justify-end">
                             <button
                                 type="button"
-                                class="p-2 rounded-lg text-slate-500 hover:bg-indigo-50 hover:text-indigo-600 transition"
+                                class="p-2 rounded-lg text-niebla-400 hover:bg-aguamarina-50 hover:text-aguamarina-600 transition"
                                 title="Ajustar stock"
                                 :aria-label="`Ajustar stock de ${row.product?.name}`"
                                 @click="openAdjust(row)"
@@ -130,7 +130,7 @@
 
             <div
                 v-if="inventoryStore.items.length > 0"
-                class="bg-white rounded-2xl border border-slate-200 shadow-sm"
+                class="bg-white rounded-2xl border border-aguamarina-100 shadow-sm"
             >
                 <AppPagination v-model:page="page" :total="inventoryStore.items.length" :per-page="perPage" />
             </div>

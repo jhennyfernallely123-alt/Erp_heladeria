@@ -1,6 +1,6 @@
 <template>
     <div class="space-y-1.5">
-        <label v-if="label" :for="inputId" class="block text-xs font-semibold text-slate-700">
+        <label v-if="label" :for="inputId" class="block text-xs font-semibold text-petrol-700">
             {{ label }}<span v-if="required" class="text-rose-500 ml-0.5">*</span>
         </label>
         <div class="relative">
@@ -8,7 +8,7 @@
                 v-if="icon"
                 :name="icon"
                 :size="16"
-                class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none"
+                class="absolute left-3 top-1/2 -translate-y-1/2 text-niebla-300 pointer-events-none"
             />
             <input
                 :id="inputId"
@@ -17,17 +17,17 @@
                 :placeholder="placeholder"
                 :required="required"
                 :disabled="disabled"
-                class="w-full rounded-xl border px-3.5 py-2.5 text-sm text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 disabled:bg-slate-50"
+                class="w-full rounded-xl border px-3.5 py-2.5 text-sm text-petrol-700 placeholder:text-niebla-300 focus:outline-none focus:ring-2 focus:ring-aguamarina-500 focus:border-aguamarina-500 disabled:bg-aguamarina-50"
                 :class="[
                     icon ? 'pl-9' : '',
-                    error ? 'border-rose-300 bg-rose-50/40' : 'border-slate-300 bg-white',
+                    error ? 'border-rose-300 bg-rose-50/40' : 'border-aguamarina-200 bg-white',
                 ]"
             />
         </div>
         <p v-if="error" class="text-xs text-rose-600 flex items-center gap-1">
             <AppIcon :name="AlertCircle" :size="13" />{{ error }}
         </p>
-        <p v-else-if="hint" class="text-xs text-slate-500">{{ hint }}</p>
+        <p v-else-if="hint" class="text-xs text-niebla-400">{{ hint }}</p>
     </div>
 </template>
 

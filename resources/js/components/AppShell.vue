@@ -1,5 +1,5 @@
 <template>
-    <div class="min-h-screen flex bg-slate-100 font-sans">
+    <div class="min-h-screen flex bg-aguamarina-50 font-sans">
         <Sidebar />
         <div class="flex-1 flex flex-col min-w-0 h-screen">
             <TopBar />

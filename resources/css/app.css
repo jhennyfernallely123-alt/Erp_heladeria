@@ -2,6 +2,23 @@
 @tailwind components;
 @tailwind utilities;
 
-body {
-    @apply bg-slate-50 text-slate-800 antialiased font-sans;
+@layer base {
+    html {
+        font-family: 'Plus Jakarta Sans', ui-sans-serif, system-ui, -apple-system,
+            'Segoe UI', Roboto, sans-serif;
+    }
+
+    body {
+        @apply bg-aguamarina-50 text-petrol-700 antialiased;
+    }
+
+    /* La marca manuscrita se reserva para el nombre de la heladeria y los
+       textos decorativos, nunca para texto de interfaz. */
+    .font-script {
+        font-family: Pacifico, 'Brush Script MT', 'Segoe Script', cursive;
+    }
+
+    .font-caveat {
+        font-family: Caveat, 'Segoe Script', cursive;
+    }
 }

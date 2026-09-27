@@ -27,7 +27,7 @@ defineProps({
     icon: { type: [Object, Function], default: null },
     iconSize: { type: Number, default: 16 },
     variant: { type: String, default: 'primary' },
-    tone: { type: String, default: 'indigo' },
+    tone: { type: String, default: 'aguamarina' },
     size: { type: String, default: 'md' },
     type: { type: String, default: 'button' },
     disabled: { type: Boolean, default: false },
@@ -40,25 +40,19 @@ const sizes = {
     md: 'px-4 py-2.5 text-sm',
 };
 
-// `tone` elige la paleta y `variant` la forma. Separarlos permite que el login
-// use el verde de la marca sin duplicar el componente.
+// `tone` elige la paleta y `variant` la forma. La paleta de la marca es la
+// unica: aguamarina para lo primario, azul petroleo para el texto.
 const tones = {
-    indigo: {
-        primary: 'bg-indigo-600 text-white hover:bg-indigo-700 shadow-sm',
-        secondary: 'bg-white text-slate-700 border border-slate-300 hover:bg-slate-50',
-        ghost: 'text-slate-600 hover:bg-slate-100',
-        danger: 'bg-rose-600 text-white hover:bg-rose-700',
-    },
     aguamarina: {
-        primary: 'bg-aguamarina-500 text-white hover:bg-aguamarina-600 shadow-sm shadow-aguamarina-600/20',
-        secondary: 'bg-white text-slate-700 border border-slate-300 hover:bg-slate-50',
-        ghost: 'text-petrol-700 hover:bg-aguamarina-50',
+        primary:
+            'bg-aguamarina-600 text-white hover:bg-aguamarina-700 shadow-sm shadow-aguamarina-600/20',
+        secondary: 'bg-white text-petrol-700 border border-aguamarina-200 hover:bg-aguamarina-50',
+        ghost: 'text-petrol-600 hover:bg-aguamarina-50',
         danger: 'bg-rose-600 text-white hover:bg-rose-700',
     },
 };
 
 const focusTones = {
-    indigo: 'focus:ring-indigo-500',
     aguamarina: 'focus:ring-aguamarina-500',
 };
 </script>

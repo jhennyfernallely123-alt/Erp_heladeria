@@ -16,18 +16,18 @@ defineProps({
 });
 
 const tones = {
-    neutral: 'bg-slate-100 text-slate-700',
+    neutral: 'bg-aguamarina-50 text-petrol-700',
     success: 'bg-emerald-50 text-emerald-700',
     warning: 'bg-amber-50 text-amber-700',
     danger: 'bg-rose-50 text-rose-700',
-    info: 'bg-indigo-50 text-indigo-700',
+    info: 'bg-aguamarina-50 text-aguamarina-700',
 };
 
 const dots = {
-    neutral: 'bg-slate-400',
+    neutral: 'bg-niebla-300',
     success: 'bg-emerald-500',
     warning: 'bg-amber-500',
     danger: 'bg-rose-500',
-    info: 'bg-indigo-500',
+    info: 'bg-aguamarina-500',
 };
 </script>

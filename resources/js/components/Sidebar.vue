@@ -1,12 +1,14 @@
 <template>
-    <aside class="w-64 bg-slate-900 text-slate-300 flex flex-col min-h-screen shrink-0 select-none">
-        <div class="h-16 px-5 flex items-center gap-3 border-b border-slate-800 shrink-0">
-            <div class="h-9 w-9 rounded-xl bg-indigo-600 flex items-center justify-center shrink-0">
+    <aside class="w-64 bg-petrol-800 flex flex-col min-h-screen shrink-0 select-none">
+        <div class="h-16 px-5 flex items-center gap-3 border-b border-petrol-700 shrink-0">
+            <div class="h-9 w-9 rounded-xl bg-aguamarina-500 flex items-center justify-center shrink-0">
                 <AppIcon :name="IceCreamBowl" :size="19" class="text-white" />
             </div>
             <div class="min-w-0">
-                <p class="text-sm font-bold text-white truncate leading-tight">Nieve Real</p>
-                <p class="text-[11px] text-slate-400">Heladería & POS</p>
+                <p class="font-script text-[1.0625rem] text-aguamarina-100 truncate leading-tight">
+                    Dulce Helado
+                </p>
+                <p class="text-[11px] text-niebla-400">Heladería & POS</p>
             </div>
         </div>
 
@@ -18,8 +20,8 @@
                 class="flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors"
                 :class="
                     isActive(item)
-                        ? 'bg-indigo-600 text-white'
-                        : 'text-slate-400 hover:text-white hover:bg-slate-800'
+                        ? 'bg-aguamarina-600 text-white shadow-sm'
+                        : 'text-niebla-300 hover:text-white hover:bg-petrol-700'
                 "
             >
                 <span

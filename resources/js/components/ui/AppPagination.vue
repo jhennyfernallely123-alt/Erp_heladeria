@@ -1,17 +1,17 @@
 <template>
     <div
-        class="flex flex-col sm:flex-row items-center justify-between gap-3 px-4 py-3 border-t border-slate-100 bg-slate-50/60"
+        class="flex flex-col sm:flex-row items-center justify-between gap-3 px-4 py-3 border-t border-slate-100 bg-aguamarina-50/60"
     >
-        <p class="text-xs text-slate-500">
-            Mostrando <span class="font-semibold text-slate-700">{{ from }}</span>-
-            <span class="font-semibold text-slate-700">{{ to }}</span> de
-            <span class="font-semibold text-slate-700">{{ total }}</span> registros
+        <p class="text-xs text-niebla-400">
+            Mostrando <span class="font-semibold text-petrol-700">{{ from }}</span>-
+            <span class="font-semibold text-petrol-700">{{ to }}</span> de
+            <span class="font-semibold text-petrol-700">{{ total }}</span> registros
         </p>
 
         <div v-if="pageCount > 1" class="flex items-center gap-1">
             <button
                 type="button"
-                class="p-1.5 rounded-lg text-slate-500 hover:bg-white hover:text-slate-800 disabled:opacity-40 disabled:cursor-not-allowed"
+                class="p-1.5 rounded-lg text-niebla-400 hover:bg-white hover:text-petrol-700 disabled:opacity-40 disabled:cursor-not-allowed"
                 :disabled="page === 1"
                 aria-label="Página anterior"
                 @click="go(page - 1)"
@@ -24,7 +24,7 @@
                 :key="index"
                 type="button"
                 class="min-w-8 h-8 px-2 rounded-lg text-xs font-semibold transition"
-                :class="n === page ? 'bg-indigo-600 text-white' : 'text-slate-600 hover:bg-white'"
+                :class="n === page ? 'bg-aguamarina-600 text-white' : 'text-petrol-600 hover:bg-white'"
                 :disabled="n === '...'"
                 @click="n !== '...' && go(n)"
             >
@@ -33,7 +33,7 @@
 
             <button
                 type="button"
-                class="p-1.5 rounded-lg text-slate-500 hover:bg-white hover:text-slate-800 disabled:opacity-40 disabled:cursor-not-allowed"
+                class="p-1.5 rounded-lg text-niebla-400 hover:bg-white hover:text-petrol-700 disabled:opacity-40 disabled:cursor-not-allowed"
                 :disabled="page === pageCount"
                 aria-label="Página siguiente"
                 @click="go(page + 1)"

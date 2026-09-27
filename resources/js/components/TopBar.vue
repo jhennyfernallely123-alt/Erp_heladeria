@@ -1,33 +1,33 @@
 <template>
     <header
-        class="h-16 bg-white border-b border-slate-200 flex items-center justify-between gap-4 px-6 shrink-0"
+        class="h-16 bg-white border-b border-aguamarina-100 flex items-center justify-between gap-4 px-6 shrink-0"
     >
-        <p class="text-sm font-semibold text-slate-900 truncate">{{ currentTitle }}</p>
+        <p class="text-sm font-semibold text-petrol-800 truncate">{{ currentTitle }}</p>
 
         <div ref="menuRoot" class="relative">
             <button
                 type="button"
-                class="flex items-center gap-2.5 pl-1.5 pr-2.5 py-1.5 rounded-xl hover:bg-slate-50 transition"
+                class="flex items-center gap-2.5 pl-1.5 pr-2.5 py-1.5 rounded-xl hover:bg-aguamarina-50 transition"
                 aria-haspopup="menu"
                 :aria-expanded="menuOpen"
                 @click="menuOpen = !menuOpen"
             >
                 <span
-                    class="h-8 w-8 rounded-full bg-indigo-600 text-white text-xs font-bold flex items-center justify-center shrink-0"
+                    class="h-8 w-8 rounded-full bg-aguamarina-600 text-white text-xs font-bold flex items-center justify-center shrink-0"
                 >
                     {{ initials }}
                 </span>
                 <span class="hidden sm:block text-left">
-                    <span class="block text-xs font-semibold text-slate-800 leading-tight">
+                    <span class="block text-xs font-semibold text-petrol-700 leading-tight">
                         {{ authStore.user?.name }}
                     </span>
                     <span
-                        class="block text-[10px] uppercase tracking-wide text-slate-400 leading-tight"
+                        class="block text-[10px] uppercase tracking-wide text-niebla-300 leading-tight"
                     >
                         {{ (authStore.user?.roles || [])[0] || 'Usuario' }}
                     </span>
                 </span>
-                <AppIcon :name="ChevronDown" :size="15" class="text-slate-400" />
+                <AppIcon :name="ChevronDown" :size="15" class="text-niebla-300" />
             </button>
 
             <Transition
@@ -38,22 +38,22 @@
             >
                 <div
                     v-if="menuOpen"
-                    class="absolute right-0 mt-2 w-56 bg-white rounded-xl border border-slate-200 shadow-lg py-1 z-50"
+                    class="absolute right-0 mt-2 w-56 bg-white rounded-xl border border-aguamarina-100 shadow-lg py-1 z-50"
                     role="menu"
                 >
                     <div class="px-4 py-2.5 border-b border-slate-100">
-                        <p class="text-xs font-semibold text-slate-800 truncate">
+                        <p class="text-xs font-semibold text-petrol-700 truncate">
                             {{ authStore.user?.name }}
                         </p>
-                        <p class="text-[11px] text-slate-500 truncate">{{ authStore.user?.email }}</p>
+                        <p class="text-[11px] text-niebla-400 truncate">{{ authStore.user?.email }}</p>
                     </div>
                     <button
                         type="button"
-                        class="w-full flex items-center gap-2.5 px-4 py-2.5 text-sm text-slate-700 hover:bg-slate-50 transition"
+                        class="w-full flex items-center gap-2.5 px-4 py-2.5 text-sm text-petrol-700 hover:bg-aguamarina-50 transition"
                         role="menuitem"
                         @click="handleLogout"
                     >
-                        <AppIcon :name="LogOut" :size="16" class="text-slate-400" />
+                        <AppIcon :name="LogOut" :size="16" class="text-niebla-300" />
                         Cerrar sesión
                     </button>
                 </div>

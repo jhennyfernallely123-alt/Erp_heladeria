@@ -7,7 +7,7 @@
         </PageHeader>
 
         <div
-            class="bg-white rounded-2xl border border-slate-200 shadow-sm p-4 flex flex-wrap items-center gap-3"
+            class="bg-white rounded-2xl border border-aguamarina-100 shadow-sm p-4 flex flex-wrap items-center gap-3"
         >
             <div class="flex-1 min-w-[220px]">
                 <AppInput v-model="search" placeholder="Buscar por nombre o descripción" :icon="Search" />
@@ -27,7 +27,7 @@
                     <option value="inactive">Inactivos</option>
                 </AppSelect>
             </div>
-            <span class="text-xs text-slate-500">{{ filtered.length }} productos</span>
+            <span class="text-xs text-niebla-400">{{ filtered.length }} productos</span>
         </div>
 
         <div class="space-y-4">
@@ -48,12 +48,12 @@
                 <tr
                     v-for="product in paged"
                     :key="product.id"
-                    class="hover:bg-slate-50 transition-colors"
+                    class="hover:bg-aguamarina-50 transition-colors"
                 >
                     <td class="p-3.5">
                         <div class="flex items-center gap-3">
                             <div
-                                class="h-10 w-10 rounded-lg overflow-hidden bg-slate-100 border border-slate-200 flex items-center justify-center shrink-0"
+                                class="h-10 w-10 rounded-lg overflow-hidden bg-aguamarina-50 border border-aguamarina-100 flex items-center justify-center shrink-0"
                             >
                                 <img
                                     v-if="product.image"
@@ -65,16 +65,16 @@
                                     v-else
                                     :name="categoryIcon(product)"
                                     :size="20"
-                                    class="text-slate-400"
+                                    class="text-niebla-300"
                                 />
                             </div>
                             <div class="min-w-0">
-                                <p class="text-sm font-semibold text-slate-800 truncate">
+                                <p class="text-sm font-semibold text-petrol-700 truncate">
                                     {{ product.name }}
                                 </p>
                                 <p
                                     v-if="product.description"
-                                    class="text-xs text-slate-400 truncate"
+                                    class="text-xs text-niebla-300 truncate"
                                 >
                                     {{ product.description }}
                                 </p>
@@ -89,7 +89,7 @@
                     <td class="p-3.5">
                         <AppBadge :label="product.category?.name || 'Sin categoría'" />
                     </td>
-                    <td class="p-3.5 text-right font-semibold text-slate-800">
+                    <td class="p-3.5 text-right font-semibold text-petrol-700">
                         $ {{ formatMoney(product.sale_price) }}
                     </td>
                     <td class="p-3.5 text-center">
@@ -103,7 +103,7 @@
                         <div class="flex items-center justify-end gap-1">
                             <button
                                 type="button"
-                                class="p-2 rounded-lg text-slate-500 hover:bg-indigo-50 hover:text-indigo-600 transition"
+                                class="p-2 rounded-lg text-niebla-400 hover:bg-aguamarina-50 hover:text-aguamarina-600 transition"
                                 title="Editar"
                                 :aria-label="`Editar ${product.name}`"
                                 @click="openEdit(product)"
@@ -112,7 +112,7 @@
                             </button>
                             <button
                                 type="button"
-                                class="p-2 rounded-lg text-slate-500 hover:bg-rose-50 hover:text-rose-600 transition"
+                                class="p-2 rounded-lg text-niebla-400 hover:bg-rose-50 hover:text-rose-600 transition"
                                 title="Eliminar"
                                 :aria-label="`Eliminar ${product.name}`"
                                 @click="askDelete(product)"
@@ -126,7 +126,7 @@
 
             <div
                 v-if="filtered.length > 0"
-                class="bg-white rounded-2xl border border-slate-200 shadow-sm"
+                class="bg-white rounded-2xl border border-aguamarina-100 shadow-sm"
             >
                 <AppPagination v-model:page="page" :total="filtered.length" :per-page="perPage" />
             </div>

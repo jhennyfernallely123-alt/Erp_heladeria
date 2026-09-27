@@ -8,15 +8,15 @@
     >
         <div class="space-y-4">
             <div
-                class="flex items-center justify-between rounded-xl bg-slate-50 border border-slate-200 px-4 py-3"
+                class="flex items-center justify-between rounded-xl bg-aguamarina-50 border border-aguamarina-100 px-4 py-3"
             >
                 <div>
-                    <p class="text-xs text-slate-500">Cantidad actual</p>
-                    <p class="text-lg font-bold text-slate-900">{{ formatNumber(currentQuantity) }}</p>
+                    <p class="text-xs text-niebla-400">Cantidad actual</p>
+                    <p class="text-lg font-bold text-petrol-800">{{ formatNumber(currentQuantity) }}</p>
                 </div>
                 <div class="text-right">
-                    <p class="text-xs text-slate-500">Stock mínimo</p>
-                    <p class="text-lg font-bold text-slate-700">{{ formatNumber(minAlert) }}</p>
+                    <p class="text-xs text-niebla-400">Stock mínimo</p>
+                    <p class="text-lg font-bold text-petrol-700">{{ formatNumber(minAlert) }}</p>
                 </div>
             </div>
 

@@ -1,6 +1,6 @@
 <template>
     <AppModal :open="open" :title="title" size="sm" @close="emit('cancel')">
-        <p class="text-sm text-slate-600">{{ message }}</p>
+        <p class="text-sm text-petrol-600">{{ message }}</p>
 
         <template #footer>
             <div class="flex justify-end gap-2">

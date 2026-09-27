@@ -1,11 +1,11 @@
 <template>
-    <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+    <div class="bg-white rounded-2xl border border-aguamarina-100 shadow-sm overflow-hidden">
         <div v-if="loading" class="p-4 space-y-3">
             <div v-for="row in 6" :key="row" class="flex items-center gap-4">
-                <div class="h-10 w-10 rounded-lg bg-slate-100 animate-pulse" />
-                <div class="h-3 rounded bg-slate-100 animate-pulse flex-1" />
-                <div class="h-3 rounded bg-slate-100 animate-pulse w-24" />
-                <div class="h-3 rounded bg-slate-100 animate-pulse w-16" />
+                <div class="h-10 w-10 rounded-lg bg-aguamarina-50 animate-pulse" />
+                <div class="h-3 rounded bg-aguamarina-50 animate-pulse flex-1" />
+                <div class="h-3 rounded bg-aguamarina-50 animate-pulse w-24" />
+                <div class="h-3 rounded bg-aguamarina-50 animate-pulse w-16" />
             </div>
         </div>
 
@@ -19,12 +19,12 @@
             <table class="w-full text-left border-collapse text-sm">
                 <thead>
                     <tr
-                        class="bg-slate-50 text-slate-500 font-semibold border-b border-slate-200 text-xs uppercase tracking-wider"
+                        class="bg-aguamarina-50 text-niebla-400 font-semibold border-b border-aguamarina-100 text-xs uppercase tracking-wider"
                     >
                         <slot name="head" />
                     </tr>
                 </thead>
-                <tbody class="divide-y divide-slate-100 text-slate-700">
+                <tbody class="divide-y divide-slate-100 text-petrol-700">
                     <slot />
                 </tbody>
             </table>

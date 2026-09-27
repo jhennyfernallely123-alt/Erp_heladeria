@@ -45,6 +45,15 @@ export default {
         papel: '#FCFDFD',
       },
       fontFamily: {
+        sans: [
+            'Plus Jakarta Sans',
+            'ui-sans-serif',
+            'system-ui',
+            '-apple-system',
+            'Segoe UI',
+            'Roboto',
+            'sans-serif',
+        ],
         script: ['Pacifico', 'Brush Script MT', 'Segoe Script', 'cursive'],
         caveat: ['Caveat', 'Segoe Script', 'cursive'],
       },

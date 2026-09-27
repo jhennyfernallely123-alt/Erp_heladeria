@@ -19,10 +19,10 @@
                         class="shrink-0 mt-0.5"
                         :class="texts[item.type]"
                     />
-                    <p class="text-sm text-slate-700 flex-1">{{ item.message }}</p>
+                    <p class="text-sm text-petrol-700 flex-1">{{ item.message }}</p>
                     <button
                         type="button"
-                        class="text-slate-400 hover:text-slate-600"
+                        class="text-niebla-300 hover:text-petrol-600"
                         aria-label="Cerrar"
                         @click="toastStore.dismiss(item.id)"
                     >
@@ -42,10 +42,10 @@ import { CheckCircle2, AlertCircle, Info, X } from 'lucide-vue-next';
 const toastStore = useToastStore();
 
 const icons = { success: CheckCircle2, error: AlertCircle, info: Info };
-const texts = { success: 'text-emerald-600', error: 'text-rose-600', info: 'text-indigo-600' };
+const texts = { success: 'text-emerald-600', error: 'text-rose-600', info: 'text-aguamarina-600' };
 const borders = {
     success: 'border-emerald-200',
     error: 'border-rose-200',
-    info: 'border-indigo-200',
+    info: 'border-aguamarina-200',
 };
 </script>
