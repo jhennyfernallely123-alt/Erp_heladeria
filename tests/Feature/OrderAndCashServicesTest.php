@@ -6,6 +6,7 @@ use Tests\TestCase;
 use App\Models\User;
 use App\Models\Category;
 use App\Models\Product;
+use App\Models\ProductStock;
 use App\Models\RestaurantTable;
 use App\Models\Invoice;
 use App\Models\Payment;
@@ -29,7 +30,14 @@ class OrderAndCashServicesTest extends TestCase
             'name' => 'Copa Frutos Rojos',
             'cost_price' => 4000,
             'sale_price' => 15000,
-            'stock_quantity' => 20,
+        ]);
+
+        ProductStock::create([
+            'product_id' => $product->id,
+            'product_variant_id' => null,
+            'quantity' => 20,
+            'min_alert' => 5,
+            'stock_type' => 'unit',
         ]);
 
         $orderService = app(OrderService::class);
@@ -46,13 +54,13 @@ class OrderAndCashServicesTest extends TestCase
         ], $user);
 
         $this->assertEquals('occupied', $table->fresh()->status);
-        $this->assertEquals(18.00, $product->fresh()->stock_quantity);
+        $this->assertEquals(18.00, $product->stock()->first()->fresh()->quantity);
         $this->assertEquals(30000.00, $order->total);
 
         // Cancel order restores stock and table
         $orderService->updateStatus($order, 'cancelled');
         $this->assertEquals('available', $table->fresh()->status);
-        $this->assertEquals(20.00, $product->fresh()->stock_quantity);
+        $this->assertEquals(20.00, $product->stock()->first()->fresh()->quantity);
     }
 
     public function test_cash_register_lifecycle_and_balance_difference(): void
