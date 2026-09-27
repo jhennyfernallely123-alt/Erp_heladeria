@@ -298,59 +298,27 @@ Los productos en estado crítico se ordenan primero y sus filas llevan un fondo 
 
 ---
 
-## 8. Pruebas y verificación
+## 8. Verificación
 
-### 8.1 Pruebas nuevas
+**Este proyecto no mantiene pruebas automatizadas.** El directorio `tests/` se eliminó por decisión del usuario: la verificación se hace de forma manual sobre la aplicación en marcha. No se crean pruebas nuevas.
 
-Tres archivos nuevos cubren el contrato de la separación, divididos por capa en vez de uno solo monolítico:
+### 8.1 Qué hay que comprobar a mano
 
-**`tests/Feature/InventoryServiceTest.php`** — el servicio, sin HTTP.
-
-- `deductStock` crea la fila de stock cuando no existe.
-- `deductStock` y `restoreStock` mueven la misma fila y no crean filas nuevas.
-- `adjustStock` con variante apunta a la fila de la variante, no a la del producto.
-- `getLowStockProducts` devuelve solo las filas por debajo del mínimo.
-
-**`tests/Feature/InventoryApiTest.php`** — los endpoints.
-
-- `GET /inventory` devuelve las filas con `meta.stats` (`total_products`, `total_units`, `low_count`, `critical_count`).
-- `GET /inventory?status=critical` filtra.
-- `POST /inventory/{id}/adjust` cambia `quantity` y escribe una fila en `stock_movements` con el `user_id` del token.
-- `POST /inventory/{id}/adjust` sin `reason` devuelve 422.
-- Un `cashier` recibe 403.
-
-**`tests/Feature/ProductApiTest.php`** — el contrato de productos sin stock.
-
-- El JSON de productos no expone `stock_quantity`, `min_stock_alert` ni `stock_type`.
-- El alta sin campos de stock devuelve 201.
-- Los campos de stock que envía el cliente se descartan en silencio (Laravel elimina las claves no declaradas en las reglas) y la fila de stock queda en 0. Se documenta que el campo no se rechaza sino que se descarta, para no romper `ApiEndpointsTest::test_auth_and_product_crud_endpoints`, que hoy lo envía.
-- `POST /products/{id}/image` guarda el archivo y persiste la ruta; un archivo de más de 2MB devuelve 422.
-- `PATCH /products/{id}/toggle-active` alterna `is_active`.
-- `DELETE /products/{id}` hace borrado lógico y el producto desaparece del listado.
-- Un pedido descuenta stock de `product_stocks`; al pasarlo a cancelado, el stock se restituye.
-- Borrar un producto que ya tiene un pedido y su factura deja ambos intactos.
-- El JSON de `GET /products` no contiene `stock_quantity`, `min_stock_alert` ni `stock_type`.
-- Crear un producto crea exactamente una fila en `product_stocks` con la cantidad inicial.
-- Un ajuste vía `POST /inventory/{id}/adjust` cambia `quantity` y deja una fila en `stock_movements` con el `user_id` del token.
-- Un pedido descuenta stock de `product_stocks`; al cambiarlo a cancelado, el stock se restituye.
-- `DELETE /products/{id}` de un producto con pedidos devuelve éxito, el producto desaparece del listado y el pedido y su factura siguen existiendo.
-- Un usuario con rol `cashier` recibe 403 en las rutas de inventario.
-
-### 8.2 Verificación manual
-
-- `php artisan migrate` aplica cleanly sobre la base de desarrollo; `php artisan migrate:rollback` revierte.
-- El seeder corre sin error y crea filas en `product_stocks` para cada producto y variante.
-- `GET /api/v1/products` no devuelve `stock_quantity`, `min_stock_alert` ni `stock_type` en el JSON.
-- `POST /api/v1/products` funciona sin campos de stock; los campos de stock que lleguen de más se descartan sin error.
-- `POST /api/v1/inventory/{id}/adjust` actualiza la cantidad y escribe una fila en `stock_movements`.
-- Crear un pedido desde el POS descuenta stock vía `product_stocks`; cancelar un pedido lo restituye.
-- La suite existente (`php artisan test`) pasa completa. Dos archivos cambian, y solo porque afirman sobre columnas que el esquema nuevo ya no tiene:
-  - `ModelRelationshipTest::test_model_relationships` crea un producto con `stock_quantity => 15` y `min_stock_alert => 5` y afirma `assertFalse($product->isLowStock())`. Se actualiza para crear la fila de `product_stocks` explícitamente y afirmar `isLowStock()` contra la relación.
-  - `OrderAndCashServicesTest::test_order_creation_deducts_stock_and_table_status_updates` crea un producto con `stock_quantity => 20` y afirma que tras un pedido de 2 unidades quedan `18.00`. Se actualiza para leer de `product->stock()->first()->quantity`.
-  - Los otros tres archivos no se tocan. `ApiEndpointsTest` sobrevive sin cambios porque los campos de stock que envía se descartan en silencio y `deductStock` crea la fila ausente con `firstOrCreate`.
+- `php artisan migrate` aplica limpio sobre la base de desarrollo y `migrate:rollback` revierte sin dejar el esquema a medias. El ciclo rollback y migrate debe repetirse varias veces sin errores.
+- `php artisan db:seed` corre sin error y deja 9 productos, 8 variantes y 17 filas en `product_stocks` (9 de producto base y 8 de variante).
+- `GET /api/v1/products` no devuelve `stock_quantity`, `min_stock_alert` ni `stock_type` en el JSON. Comprobarlo sobre el JSON crudo y no sobre la UI: un fallo de relación Eloquent se manifiesta como `null` silencioso, y la UI lo disimula mostrando "Producto base" en todas las filas.
+- `POST /api/v1/products` funciona sin campos de stock; los que lleguen de más se descartan sin error.
+- `POST /api/v1/inventory/{id}/adjust` cambia la cantidad y escribe una fila en `stock_movements`. Sin `reason` debe devolver 422.
+- Un `cashier` recibe 403 en las rutas de inventario.
+- Crear un pedido descuenta stock vía `product_stocks`; cancelarlo lo restituye.
+- La columna Variante de Inventario muestra el nombre real de cada variante. Si todas las filas dicen "Producto base", la relación `ProductStock::variant()` perdió su clave foránea.
+- Borrar un producto que ya se vendió deja su pedido y su factura intactos.
 - `npm run build` compila sin errores.
-- El historial de un producto vendido sobrevive a un `DELETE` (borrado lógico) y sus pedidos y facturas siguen intactos.
-- Ninguna vista del alcance contiene el carácter de emoji.
+- Ninguna vista del alcance contiene un emoji.
+
+### 8.2 Nota sobre la base de datos
+
+La contraseña de los usuarios del seed es `password`. `php artisan migrate:fresh --seed` es necesario para recuperar los datos de demostración después de cualquier cambio de esquema.
 
 ---
 

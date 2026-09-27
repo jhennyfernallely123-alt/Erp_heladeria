@@ -10,9 +10,13 @@
 
 **Spec:** `docs/superpowers/specs/2026-09-27-modulo-productos-independiente-stock-design.md`
 
+> **Nota sobre las pruebas:** este plan se escribióoriginally con TDD y tareas de pruebas en las Tasks 5, 6, 7 y 9. El usuario decidió después que el proyecto **no mantiene pruebas automatizadas** y el directorio `tests/` se eliminó por completo. Las tareas que escriben archivos bajo `tests/` quedan **anuladas**: se conservan solo como referencia del contrato esperado, no se ejecutan. Cada tarea se cierra con la verificación manual del spec, sección 8.
+
 ---
 
 ## Mapa de archivos
+
+> El directorio `tests/` que aparece en este mapa **fue eliminado por decisión del usuario**. No se recrea y no se escriben pruebas nuevas.
 
 ### Backend — se crean
 | Archivo | Responsabilidad |
