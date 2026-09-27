@@ -15,54 +15,26 @@
                 </p>
 
                 <div class="heart-divider">
-                    <AppIcon :name="Heart" :size="24" class="fill-aguamarina-500 text-aguamarina-500" />
+                    <span class="divider-bar" />
+                    <AppIcon :name="Heart" :size="26" class="fill-petrol-600 text-petrol-600" />
+                    <span class="divider-bar" />
                 </div>
 
                 <div class="illustration-area">
-                    <!-- Ilustracion: recipiente con bolas de helado -->
+                    <!-- Ilustracion: vaso con tres sabores, galera y chispas -->
                     <div class="icecream-art">
-                        <div class="icecream-bowl">
-                            <div class="cone" />
+                        <!-- Adornos sueltos, como en la referencia -->
+                        <span class="doodle doodle-heart-left">
+                            <AppIcon :name="Heart" :size="28" class="text-aguamarina-500" />
+                        </span>
+                        <span class="doodle doodle-dash-left" />
+                        <span class="doodle doodle-dash-left-2" />
+                        <span class="doodle doodle-heart-right">
+                            <AppIcon :name="Heart" :size="24" class="text-aguamarina-500" />
+                        </span>
 
-                            <div class="icecream-scoops">
-                                <div class="scoop chocolate" />
-                                <div class="scoop strawberry" />
-                                <div class="scoop vanilla" />
-
-                                <div class="topping">
-                                    <svg viewBox="0 0 24 24" class="h-full w-full" aria-hidden="true">
-                                        <path
-                                            d="M12 8c-3-2.2-6.5.6-6.5 4.1C5.5 15.6 8.6 19 12 22c3.4-3 6.5-6.4 6.5-9.9C18.5 8.6 15 5.8 12 8z"
-                                            fill="#E4685D"
-                                        />
-                                        <path
-                                            d="M12 8c-.6-1.6-.2-3.4 1.2-4.4 1.2-.8 2.6-.7 3.6-.2-1 .9-1.4 2.1-1.2 3.2.2 1 .8 1.6 1.6 2z"
-                                            fill="#6FA25F"
-                                        />
-                                        <ellipse
-                                            cx="9.4"
-                                            cy="12.4"
-                                            rx="1.3"
-                                            ry="1.9"
-                                            fill="#FFFFFF"
-                                            opacity="0.5"
-                                            transform="rotate(-24 9.4 12.4)"
-                                        />
-                                    </svg>
-                                </div>
-                            </div>
-
-                            <div class="bowl">
-                                <svg viewBox="0 0 24 22" class="h-full w-full" aria-hidden="true">
-                                    <path
-                                        d="M12 20.5C10.5 19 3 12.6 3 8.3 3 5.1 5.5 3 8.4 3c1.9 0 3 .9 3.6 2 .6-1.1 1.7-2 3.6-2 2.9 0 5.4 2.1 5.4 5.3 0 4.3-7.5 10.7-9 12.2z"
-                                        fill="none"
-                                        stroke="#FFFFFF"
-                                        stroke-width="2"
-                                        stroke-linejoin="round"
-                                    />
-                                </svg>
-                            </div>
+                        <div class="cup-art">
+                            <IceCreamCupArt />
                         </div>
                     </div>
 
@@ -71,7 +43,11 @@
                         ¡Bienvenido<br />
                         a tu heladería<br />
                         favorita!
-                        <span class="note-hearts">♡ ─ ♥ ─</span>
+                        <span class="note-hearts">
+                            <span class="note-bar" />
+                            <AppIcon :name="Heart" :size="18" class="fill-petrol-600 text-petrol-600" />
+                            <span class="note-bar" />
+                        </span>
                     </div>
                 </div>
             </div>
@@ -222,6 +198,7 @@ import {
 } from 'lucide-vue-next';
 import AppIcon from '../components/ui/AppIcon.vue';
 import IceCreamConeArt from '../components/login/IceCreamConeArt.vue';
+import IceCreamCupArt from '../components/login/IceCreamCupArt.vue';
 import { useAuthStore } from '../stores/auth';
 
 const authStore = useAuthStore();
@@ -298,7 +275,7 @@ const submitLogin = async () => {
 .brand-panel {
     position: relative;
     min-height: 100vh;
-    padding: 35px 45px 30px;
+    padding: 30px 42px 26px;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -306,29 +283,29 @@ const submitLogin = async () => {
     overflow: hidden;
 }
 
-/* Formas decorativas del fondo */
+/* Formas decorativas del fondo: banda diagonal arriba y ola abajo */
 .brand-panel::before {
     content: '';
     position: absolute;
-    width: 580px;
-    height: 350px;
-    top: -120px;
-    right: -170px;
-    background: rgba(115, 207, 196, 0.15);
-    border-radius: 48% 52% 64% 36%;
-    transform: rotate(-20deg);
+    width: 760px;
+    height: 420px;
+    top: -200px;
+    right: -220px;
+    background: #cdeeea;
+    border-radius: 0 0 0 46%;
+    transform: rotate(-18deg);
 }
 
 .brand-panel::after {
     content: '';
     position: absolute;
-    width: 750px;
-    height: 240px;
-    bottom: -130px;
-    left: -170px;
+    width: 900px;
+    height: 260px;
+    bottom: -140px;
+    left: -200px;
     background: #a7dfd9;
-    border-radius: 48% 52% 0 0;
-    transform: rotate(-7deg);
+    border-radius: 46% 54% 0 0;
+    transform: rotate(-6deg);
 }
 
 .brand-content,
@@ -346,47 +323,57 @@ const submitLogin = async () => {
 }
 
 .logo-icon {
-    width: 78px;
-    height: 84px;
-    margin-bottom: 5px;
+    width: 92px;
+    height: 104px;
+    margin-bottom: 8px;
     filter: drop-shadow(0 4px 2px rgba(35, 107, 115, 0.12));
 }
 
 /* ============ LOGO Y NOMBRE ============ */
 .brand-name {
     font-family: Pacifico, 'Brush Script MT', 'Segoe Script', cursive;
-    font-size: clamp(38px, 4vw, 58px);
+    font-size: clamp(40px, 4.4vw, 64px);
     font-weight: 400;
     font-style: italic;
-    color: #236b73;
+    color: #1a4a52;
     line-height: 1.1;
     text-align: center;
     margin: 0;
 }
 
 .brand-subtitle {
-    font-size: 17px;
+    font-size: 20px;
     line-height: 1.4;
-    color: #5e858b;
+    color: #1f4e57;
+    font-weight: 500;
     text-align: center;
-    margin-top: 10px;
+    margin-top: 12px;
 }
 
 .heart-divider {
-    margin-top: 5px;
+    margin-top: 12px;
     display: flex;
+    align-items: center;
     justify-content: center;
+    gap: 12px;
+}
+
+.divider-bar {
+    width: 46px;
+    height: 5px;
+    border-radius: 3px;
+    background: #4ba9a6;
 }
 
 /* ============ ZONA DE ILUSTRACIONES ============ */
 .illustration-area {
     width: 100%;
-    min-height: 310px;
+    min-height: 330px;
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: 1.15fr 1fr;
     align-items: center;
     gap: 5px;
-    margin-top: 10px;
+    margin-top: 18px;
 }
 
 .icecream-art {
@@ -397,120 +384,73 @@ const submitLogin = async () => {
     min-width: 0;
 }
 
-.icecream-bowl {
-    position: relative;
-    width: 220px;
-    height: 220px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: flex-end;
-}
-
-.icecream-scoops {
-    position: relative;
-    z-index: 2;
+.cup-art {
     width: 100%;
-    height: 125px;
-    display: flex;
-    align-items: flex-end;
-    justify-content: center;
+    max-width: 300px;
 }
 
-.scoop {
-    width: 100px;
-    height: 105px;
-    border-radius: 50% 50% 42% 42%;
-    position: relative;
-    margin: 0 -13px;
-    box-shadow: inset -7px -8px 0 rgba(0, 0, 0, 0.05);
-}
-
-/* Reflejo de cada bola */
-.scoop::after {
-    content: '';
+/* Corazones y trazos sueltos alrededor del vaso */
+.doodle {
     position: absolute;
+    display: flex;
+    line-height: 0;
+}
+
+.doodle-heart-left {
+    left: -2%;
+    top: 26%;
+}
+
+.doodle-dash-left {
+    left: 6%;
+    top: 6%;
+    width: 26px;
+    height: 5px;
+    border-radius: 3px;
+    background: #4ba9a6;
+    transform: rotate(-38deg);
+}
+
+.doodle-dash-left-2 {
+    left: 1%;
+    top: 13%;
     width: 18px;
-    height: 13px;
-    top: 24px;
-    left: 24px;
-    border-radius: 50%;
-    background: rgba(255, 255, 255, 0.35);
+    height: 4px;
+    border-radius: 2px;
+    background: #4ba9a6;
+    transform: rotate(-38deg);
 }
 
-.scoop.chocolate {
-    background: #73503e;
-    transform: rotate(-10deg);
-}
-
-.scoop.strawberry {
-    background: #ffaaa9;
-    transform: translateY(-20px);
-}
-
-.scoop.vanilla {
-    background: #f7e3b9;
-    transform: rotate(10deg);
-}
-
-.topping {
-    position: absolute;
-    z-index: 3;
-    top: 2px;
-    left: 35%;
-    width: 30px;
-    height: 30px;
-}
-
-.cone {
-    position: absolute;
-    z-index: 1;
-    width: 38px;
-    height: 110px;
-    top: 100px;
-    left: 17px;
-    background: repeating-linear-gradient(135deg, #d99b55 0px, #d99b55 7px, #f1c58b 8px, #f1c58b 12px);
-    clip-path: polygon(0 0, 100% 0, 50% 100%);
-    transform: rotate(-12deg);
-}
-
-.bowl {
-    position: relative;
-    z-index: 4;
-    width: 190px;
-    height: 100px;
-    margin-top: -10px;
-    background: linear-gradient(120deg, #64c6be, #43b2aa);
-    border-radius: 10px 10px 45% 45%;
-    box-shadow: 0 10px 18px rgba(43, 121, 118, 0.16);
-    border-top: 7px solid #9fe0d9;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.bowl svg {
-    width: 52px;
-    height: 48px;
+.doodle-heart-right {
+    right: -2%;
+    top: 20%;
 }
 
 /* Mensaje decorativo */
 .welcome-note {
     font-family: Caveat, 'Brush Script MT', 'Segoe Script', cursive;
-    font-size: 25px;
-    line-height: 1.25;
+    font-size: 30px;
+    line-height: 1.18;
     font-style: italic;
-    color: #236b73;
-    transform: rotate(-5deg);
+    color: #1f4e57;
+    transform: rotate(-6deg);
     text-align: center;
     padding: 10px;
 }
 
 .note-hearts {
-    display: block;
-    font-size: 22px;
-    margin-top: 8px;
-    color: #236b73;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 12px;
+}
+
+.note-bar {
+    width: 30px;
+    height: 4px;
+    border-radius: 2px;
+    background: #4ba9a6;
 }
 
 /* ============ BENEFICIOS INFERIORES ============ */
@@ -528,10 +468,11 @@ const submitLogin = async () => {
 .feature {
     display: flex;
     align-items: center;
-    gap: 8px;
-    font-size: 10px;
-    line-height: 1.4;
-    color: #245c65;
+    gap: 9px;
+    font-size: 12px;
+    line-height: 1.35;
+    font-weight: 500;
+    color: #1f4e57;
 }
 
 .feature-icon {
@@ -566,16 +507,17 @@ const submitLogin = async () => {
 }
 
 .form-header h2 {
-    font-size: 25px;
-    font-weight: 700;
-    color: #204f59;
-    margin: 0 0 5px;
+    font-size: 30px;
+    font-weight: 800;
+    color: #1a4a52;
+    margin: 0 0 8px;
+    letter-spacing: -0.01em;
 }
 
 .form-header p {
-    font-size: 12px;
+    font-size: 14px;
     line-height: 1.5;
-    color: #718995;
+    color: #6d8894;
 }
 
 /* ============ PERFILES ============ */
@@ -615,20 +557,21 @@ const submitLogin = async () => {
 
 .role-icon {
     display: flex;
-    margin-bottom: 6px;
-    color: #236b73;
+    margin-bottom: 8px;
+    color: #1f4e57;
 }
 
 .role-name {
-    font-size: 12px;
-    font-weight: 500;
+    font-size: 14px;
+    font-weight: 700;
     margin-bottom: 4px;
+    color: #1f4e57;
 }
 
 .role-description {
-    font-size: 9px;
-    line-height: 1.3;
-    color: #718995;
+    font-size: 10.5px;
+    line-height: 1.35;
+    color: #6d8894;
     text-align: center;
 }
 
@@ -643,9 +586,9 @@ const submitLogin = async () => {
     display: flex;
     align-items: stretch;
     width: 100%;
-    height: 50px;
-    border: 1px solid #dce8eb;
-    border-radius: 10px;
+    height: 58px;
+    border: 1px solid #dfe8ea;
+    border-radius: 12px;
     overflow: hidden;
     background: #fff;
     transition: border 0.2s ease, box-shadow 0.2s ease;
@@ -653,7 +596,7 @@ const submitLogin = async () => {
 
 .input-group:focus-within {
     border-color: #4ba9a6;
-    box-shadow: 0 0 0 3px rgba(75, 169, 166, 0.08);
+    box-shadow: 0 0 0 3px rgba(75, 169, 166, 0.10);
 }
 
 .input-group.invalid {
@@ -661,14 +604,14 @@ const submitLogin = async () => {
 }
 
 .input-icon {
-    width: 45px;
+    width: 52px;
     flex-shrink: 0;
     display: flex;
     align-items: center;
     justify-content: center;
-    background: #f4f8f9;
-    border-right: 1px solid #edf1f2;
-    color: #236b73;
+    background: #f6f9fa;
+    border-right: 1px solid #eef2f3;
+    color: #1f4e57;
 }
 
 .input-content {
@@ -676,7 +619,7 @@ const submitLogin = async () => {
     display: flex;
     flex-direction: column;
     justify-content: center;
-    padding: 0 10px;
+    padding: 0 12px;
     min-width: 0;
 }
 
@@ -685,27 +628,27 @@ const submitLogin = async () => {
     border: none;
     outline: none;
     background: transparent;
-    font-size: 12px;
-    color: #245c65;
+    font-size: 14.5px;
+    color: #1f4e57;
     padding: 0;
 }
 
 .input-content input::placeholder {
-    color: #879ca7;
+    color: #8ba1ab;
 }
 
 .input-content small {
-    font-size: 9px;
-    color: #718995;
-    margin-top: 3px;
+    font-size: 11.5px;
+    color: #8ba1ab;
+    margin-top: 2px;
 }
 
 .toggle-password {
     border: none;
     background: transparent;
     cursor: pointer;
-    padding: 0 12px;
-    color: #78919b;
+    padding: 0 14px;
+    color: #8ba1ab;
     display: flex;
     align-items: center;
 }
@@ -713,14 +656,14 @@ const submitLogin = async () => {
 /* ============ BOTON ============ */
 .login-button {
     width: 100%;
-    height: 43px;
+    height: 50px;
     margin-top: 8px;
     border: none;
-    border-radius: 9px;
-    background: linear-gradient(90deg, #48a9a6, #4eaaa6);
+    border-radius: 10px;
+    background: linear-gradient(90deg, #4caaa7, #3f9f9c);
     color: #fff;
-    font-size: 13px;
-    font-weight: 600;
+    font-size: 15.5px;
+    font-weight: 700;
     cursor: pointer;
     display: flex;
     align-items: center;
@@ -746,9 +689,9 @@ const submitLogin = async () => {
     align-items: center;
     justify-content: center;
     gap: 10px;
-    margin-top: 23px;
-    color: #718995;
-    font-size: 10px;
+    margin-top: 26px;
+    color: #6d8894;
+    font-size: 12.5px;
 }
 
 .card-footer::before,
@@ -807,7 +750,7 @@ const submitLogin = async () => {
         display: none;
     }
 
-    .icecream-bowl {
+    .icecream-art {
         transform: scale(0.9);
     }
 }
