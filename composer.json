@@ -10,6 +10,8 @@
         "laravel/framework": "^11.0",
         "laravel/sanctum": "^4.0",
         "laravel/tinker": "^2.9",
+        "spatie/browsershot": "^5.4",
+        "spatie/laravel-pdf": "^2.13",
         "spatie/laravel-permission": "6.10"
     },
     "require-dev": {

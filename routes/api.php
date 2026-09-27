@@ -42,7 +42,9 @@ Route::prefix('v1')->group(function () {
         // Invoicing & Checkout
         Route::get('/invoices', [InvoiceController::class, 'index']);
         Route::post('/invoices', [InvoiceController::class, 'store']);
+        Route::get('/invoices/{invoice}/preview', [InvoiceController::class, 'preview']);
         Route::get('/invoices/{invoice}/pdf', [InvoiceController::class, 'downloadPdf']);
+        Route::get('/invoices/{invoice}/ticket', [InvoiceController::class, 'downloadTicket']);
 
         // Cash Register (Turnos de caja)
         Route::get('/cash-register/current', [CashRegisterController::class, 'current']);

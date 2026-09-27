@@ -5,16 +5,14 @@ namespace App\Services\Invoicing;
 use App\Contracts\InvoiceProviderInterface;
 use App\Models\Invoice;
 use App\Models\BusinessSetting;
-use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Facades\Storage;
 
 class DianInvoiceProvider implements InvoiceProviderInterface
 {
     protected string $apiUrl;
     protected string $apiToken;
 
-    public function __construct()
+    public function __construct(protected PdfRenderer $pdf)
     {
         $this->apiUrl = config('services.dian.api_url', env('DIAN_API_URL', 'https://api.dian.gov.co/mock'));
         $this->apiToken = config('services.dian.api_token', env('DIAN_API_TOKEN', 'mock_token'));
@@ -107,31 +105,17 @@ class DianInvoiceProvider implements InvoiceProviderInterface
 
         $invoice->dian_status = $dianStatus;
 
-        // 5. Generate PDF thermal ticket containing CUFE and DIAN badge
-        $settings = [
-            'shop_name' => BusinessSetting::get('shop_name', 'Heladería Artesanal'),
-            'shop_nit' => BusinessSetting::get('shop_nit', '900.123.456-7'),
-            'shop_address' => BusinessSetting::get('shop_address', 'Calle Principal # 10 - 20'),
-            'shop_phone' => BusinessSetting::get('shop_phone', '300 123 4567'),
-        ];
-
-        $invoice->loadMissing(['order.items.product', 'order.items.variant', 'order.table', 'payments']);
-
-        $pdf = Pdf::loadView('pdf.ticket', [
-            'invoice' => $invoice,
-            'settings' => $settings,
-        ])->setPaper([0, 0, 226.77, 650], 'portrait');
-
-        $fileName = 'invoices/' . $invoice->invoice_number . '.pdf';
-        Storage::disk('public')->put($fileName, $pdf->output());
-
-        $invoice->pdf_path = $fileName;
+        // 5. Factura A4 con CUFE y distintivo DIAN + ticket termico
+        $invoice->pdf_path = $this->pdf->renderInvoice($invoice);
         $invoice->save();
+
+        $this->pdf->renderTicket($invoice);
 
         return [
             'success' => true,
             'invoice_number' => $invoice->invoice_number,
-            'pdf_path' => $fileName,
+            'pdf_path' => $invoice->pdf_path,
+            'ticket_path' => $this->pdf->ticketPath($invoice),
             'cufe' => $cufe,
             'dian_status' => $dianStatus,
             'message' => $message,

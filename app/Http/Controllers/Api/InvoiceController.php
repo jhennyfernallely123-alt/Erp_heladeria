@@ -6,6 +6,7 @@ use App\Models\Order;
 use App\Models\Invoice;
 use App\Models\Payment;
 use App\Services\Invoicing\InvoiceService;
+use App\Services\Invoicing\PdfRenderer;
 use App\Services\OrderService;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
@@ -14,8 +15,10 @@ use Illuminate\Support\Facades\Storage;
 
 class InvoiceController extends BaseApiController
 {
-    public function __construct(protected OrderService $orderService)
-    {
+    public function __construct(
+        protected OrderService $orderService,
+        protected PdfRenderer $pdf,
+    ) {
     }
 
     public function index(): JsonResponse
@@ -100,14 +103,48 @@ class InvoiceController extends BaseApiController
         });
     }
 
+    /**
+     * Factura A4. Se regenera si el archivo no esta en disco, para que un
+     * documento perdido se recupere sin intervention manual.
+     */
     public function downloadPdf(Invoice $invoice)
     {
-        if (!$invoice->pdf_path || !Storage::disk('public')->exists($invoice->pdf_path)) {
-            // Regenerate if not stored
-            $provider = InvoiceService::getProvider($invoice->billing_mode);
-            $provider->generateInvoice($invoice);
+        if (!$this->pdf->invoiceExists($invoice)) {
+            InvoiceService::getProvider($invoice->billing_mode)->generateInvoice($invoice);
         }
 
         return Storage::disk('public')->download($invoice->pdf_path);
+    }
+
+    /** Ticket termico de 80mm, pensado para la impresora de rollo. */
+    public function downloadTicket(Invoice $invoice)
+    {
+        if (!$this->pdf->ticketExists($invoice)) {
+            InvoiceService::getProvider($invoice->billing_mode)->generateInvoice($invoice);
+        }
+
+        return Storage::disk('public')->download($this->pdf->ticketPath($invoice));
+    }
+
+    /**
+     * Metadatos para la previsualizacion del front. El PDF se sirve aparte;
+     * esto solo dice si existe, cuanto pesa y que formato tiene.
+     */
+    public function preview(Invoice $invoice): JsonResponse
+    {
+        if (!$this->pdf->invoiceExists($invoice)) {
+            InvoiceService::getProvider($invoice->billing_mode)->generateInvoice($invoice);
+        }
+
+        $path = $invoice->fresh()->pdf_path;
+
+        return $this->successResponse([
+            'invoice_id' => $invoice->id,
+            'invoice_number' => $invoice->invoice_number,
+            'url' => url("/api/v1/invoices/{$invoice->id}/pdf"),
+            'ticket_url' => url("/api/v1/invoices/{$invoice->id}/ticket"),
+            'size_bytes' => Storage::disk('public')->size($path),
+            'generated_at' => optional($invoice->fresh()->updated_at)->toIso8601String(),
+        ]);
     }
 }

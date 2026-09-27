@@ -20,7 +20,22 @@ return Application::configure(basePath: dirname(__DIR__))
             'permission' => PermissionMiddleware::class,
             'role_or_permission' => RoleOrPermissionMiddleware::class,
         ]);
+
+        // Esta aplicacion es solo API y no tiene ruta 'login'. Si el middleware
+        // intenta redirigir a un invitado, route('login') lanza
+        // RouteNotFoundException y la respuesta es un 500 en vez de un 401.
+        // Devolver null hace que lance AuthenticationException, que ya sabe
+        // responder 401 en JSON.
+        $middleware->redirectGuestsTo(
+            fn ($request) => ($request->is('api/*') ? null : '/')
+        );
     })
     ->withExceptions(function (Exceptions $exceptions) {
-        //
+        // Esta aplicacion es solo API: no hay ruta 'login' a la que Sanctum
+        // pueda redirigir. Sin esto, una peticion sin token y sin la cabecera
+        // Accept: application/json (por ejemplo al pegar la URL en el navegador)
+        // devolvia un 500 por RouteNotFoundException en vez de un 401 claro.
+        $exceptions->shouldRenderJsonWhen(
+            fn ($request) => $request->is('api/*') || $request->expectsJson()
+        );
     })->create();

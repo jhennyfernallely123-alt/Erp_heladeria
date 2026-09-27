@@ -5,11 +5,13 @@ namespace App\Services\Invoicing;
 use App\Contracts\InvoiceProviderInterface;
 use App\Models\Invoice;
 use App\Models\BusinessSetting;
-use Barryvdh\DomPDF\Facade\Pdf;
-use Illuminate\Support\Facades\Storage;
 
 class InternalInvoiceProvider implements InvoiceProviderInterface
 {
+    public function __construct(protected PdfRenderer $pdf)
+    {
+    }
+
     public function generateInvoice(Invoice $invoice): array
     {
         // 1. Ensure consecutive invoice number if not set or empty
@@ -24,36 +26,23 @@ class InternalInvoiceProvider implements InvoiceProviderInterface
 
         $invoice->billing_mode = 'internal';
         $invoice->dian_status = 'accepted';
+        $invoice->save();
 
-        // 2. Compile business settings
-        $settings = [
-            'shop_name' => BusinessSetting::get('shop_name', 'Heladería Artesanal'),
-            'shop_nit' => BusinessSetting::get('shop_nit', '900.123.456-7'),
-            'shop_address' => BusinessSetting::get('shop_address', 'Calle Principal # 10 - 20'),
-            'shop_phone' => BusinessSetting::get('shop_phone', '300 123 4567'),
-        ];
+        // 2. Factura A4 (Chromium) + ticket termico de 80mm (DOMPDF)
+        $invoicePath = $this->pdf->renderInvoice($invoice);
+        $this->pdf->renderTicket($invoice);
 
-        // 3. Generate PDF thermal ticket
-        $invoice->loadMissing(['order.items.product', 'order.items.variant', 'order.table', 'payments']);
-
-        $pdf = Pdf::loadView('pdf.ticket', [
-            'invoice' => $invoice,
-            'settings' => $settings,
-        ])->setPaper([0, 0, 226.77, 600], 'portrait'); // 80mm thermal width
-
-        $fileName = 'invoices/' . $invoice->invoice_number . '.pdf';
-        Storage::disk('public')->put($fileName, $pdf->output());
-
-        $invoice->pdf_path = $fileName;
+        $invoice->pdf_path = $invoicePath;
         $invoice->save();
 
         return [
             'success' => true,
             'invoice_number' => $invoice->invoice_number,
-            'pdf_path' => $fileName,
+            'pdf_path' => $invoicePath,
+            'ticket_path' => $this->pdf->ticketPath($invoice),
             'cufe' => null,
             'dian_status' => 'accepted',
-            'message' => 'Ticket de venta interno generado exitosamente',
+            'message' => 'Factura interna generada exitosamente',
         ];
     }
 

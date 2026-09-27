@@ -263,19 +263,25 @@
 
             <template #footer>
                 <div class="grid grid-cols-2 gap-3">
-                    <a
-                        :href="`/api/v1/invoices/${issuedInvoice?.id}/pdf`"
-                        target="_blank"
-                        rel="noopener"
-                        class="py-2.5 px-4 bg-petrol-800 hover:bg-petrol-700 text-white font-bold rounded-xl text-xs flex items-center justify-center gap-1.5 shadow-sm"
-                    >
-                        <AppIcon :name="Printer" :size="15" />
-                        Imprimir ticket
-                    </a>
+                    <AppButton
+                        variant="secondary"
+                        label="Ver factura"
+                        :icon="FileText"
+                        @click="previewOpen = true"
+                    />
                     <AppButton label="Siguiente pedido" @click="finishCheckout" />
                 </div>
             </template>
         </AppModal>
+
+        <!-- Previsualizacion de la factura -->
+        <InvoicePreviewModal
+            :open="previewOpen"
+            :invoice-id="issuedInvoice?.id"
+            :title="`Factura ${issuedInvoice?.invoice_number || ''}`"
+            :subtitle="issuedInvoice?.billing_mode === 'dian' ? 'Facturación electrónica DIAN UBL 2.1' : 'Facturación interna'"
+            @close="previewOpen = false"
+        />
     </div>
 </template>
 
@@ -286,8 +292,8 @@ import {
     ArrowLeft,
     Banknote,
     CheckCircle2,
+    FileText,
     Plus,
-    Printer,
     Receipt,
     Split,
 } from 'lucide-vue-next';
@@ -297,6 +303,7 @@ import AppIcon from '../components/ui/AppIcon.vue';
 import AppInput from '../components/ui/AppInput.vue';
 import AppModal from '../components/ui/AppModal.vue';
 import AppSelect from '../components/ui/AppSelect.vue';
+import InvoicePreviewModal from '../components/invoice/InvoicePreviewModal.vue';
 import api from '../api';
 
 const route = useRoute();
@@ -307,6 +314,7 @@ const order = ref(null);
 const loading = ref(true);
 const isSubmitting = ref(false);
 const issuedInvoice = ref(null);
+const previewOpen = ref(false);
 
 const isDianMode = ref(false);
 const cashReceived = ref(0);
@@ -396,6 +404,7 @@ const submitCheckout = async () => {
 };
 
 const finishCheckout = () => {
+    previewOpen.value = false;
     issuedInvoice.value = null;
     router.push('/');
 };
