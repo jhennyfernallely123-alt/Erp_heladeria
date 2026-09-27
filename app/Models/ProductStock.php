@@ -22,6 +22,8 @@ class ProductStock extends Model
         'min_alert' => 'decimal:2',
     ];
 
+    protected $appends = ['status', 'formatted_quantity'];
+
     public function product()
     {
         return $this->belongsTo(Product::class);
@@ -48,6 +50,16 @@ class ProductStock extends Model
         }
 
         return 'normal';
+    }
+
+    public function getStatusAttribute(): string
+    {
+        return $this->status();
+    }
+
+    public function getFormattedQuantityAttribute(): string
+    {
+        return $this->formattedQuantity();
     }
 
     public function formattedQuantity(): string

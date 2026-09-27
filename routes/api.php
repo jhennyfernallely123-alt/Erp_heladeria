@@ -10,6 +10,7 @@ use App\Http\Controllers\Api\InvoiceController;
 use App\Http\Controllers\Api\CashRegisterController;
 use App\Http\Controllers\Api\FinanceController;
 use App\Http\Controllers\Api\SettingController;
+use App\Http\Controllers\Api\InventoryController;
 
 Route::prefix('v1')->group(function () {
     // Public Auth
@@ -23,7 +24,15 @@ Route::prefix('v1')->group(function () {
         // Categories & Products
         Route::apiResource('categories', CategoryController::class);
         Route::apiResource('products', ProductController::class);
-        Route::post('/products/{product}/adjust-stock', [ProductController::class, 'adjustStock']);
+        Route::patch('/products/{product}/toggle-active', [ProductController::class, 'toggleActive']);
+        Route::post('/products/{product}/image', [ProductController::class, 'uploadImage']);
+
+        // Inventory (admin only)
+        Route::middleware('role:admin')->group(function () {
+            Route::get('/inventory', [InventoryController::class, 'index']);
+            Route::get('/inventory/low-stock', [InventoryController::class, 'lowStock']);
+            Route::post('/inventory/{stock}/adjust', [InventoryController::class, 'adjust']);
+        });
 
         // Tables & Orders (POS)
         Route::apiResource('tables', TableController::class);

@@ -38,7 +38,8 @@ class InventoryService
         ?ProductVariant $variant,
         float $newQuantity,
         string $reason = '',
-        ?int $userId = null
+        ?int $userId = null,
+        string $movementType = 'adjustment'
     ): void {
         $stock = ProductStock::resolve($product, $variant);
         $delta = round($newQuantity - (float) $stock->quantity, 2);
@@ -47,7 +48,7 @@ class InventoryService
 
         if ($delta !== 0.0) {
             $stock->movements()->create([
-                'type' => 'adjustment',
+                'type' => $movementType,
                 'quantity' => $delta,
                 'reason' => $reason !== '' ? $reason : 'Ajuste manual',
                 'user_id' => $userId,
