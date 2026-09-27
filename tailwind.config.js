@@ -8,47 +8,49 @@ export default {
   theme: {
     extend: {
       colors: {
-        ice: {
-          50: '#fdf4f7',
-          100: '#fbe8f0',
-          200: '#f7d2e2',
-          300: '#f1adc9',
-          400: '#e67ca6',
-          500: '#d75284',
-          600: '#c0386c',
-          700: '#a32855',
-          800: '#872347',
-          900: '#71213e',
+        // Paleta de la pantalla de login, tomada de la imagen de referencia.
+        aguamarina: {
+          50: '#F2FAF9',
+          100: '#DDF3F0',
+          200: '#BCE6E2',
+          300: '#93D5CF',
+          400: '#6BC2BB',
+          500: '#4BA9A6',
+          600: '#45AAA7',
+          700: '#3B8C89',
+          800: '#33706E',
+          900: '#2C5A59',
         },
-        // Paleta de la pantalla de login: verdes y turquesas del degradado.
-        brand: {
-          50: '#f2faf8',
-          100: '#dcf1ec',
-          200: '#b8e3da',
-          300: '#8ad2c5',
-          400: '#5fbdae',
-          500: '#43a194',
-          600: '#35857b',
-          700: '#2d6b64',
-          800: '#275653',
-          900: '#244846',
+        // Azul petróleo del texto principal.
+        petrol: {
+          50: '#F0F6F7',
+          100: '#DAEAED',
+          200: '#B5D2D8',
+          300: '#86B4BE',
+          400: '#54929E',
+          500: '#3B7884',
+          600: '#2E6672',
+          700: '#205B66',
+          800: '#1A4A54',
+          900: '#163C44',
         },
-        mint: {
-          50: '#f4fbfa',
-          100: '#e2f5f1',
-          200: '#c6ebe4',
-          300: '#9ddcd2',
-          400: '#6ec6ba',
-          500: '#4aab9f',
-          600: '#3a8f86',
-          700: '#31736d',
-          800: '#2c5c58',
-          900: '#274d4a',
+        // Gris azulado del texto secundario.
+        niebla: {
+          200: '#C2D0D6',
+          300: '#9BAFBA',
+          400: '#718A98',
+          500: '#5A7382',
         },
+        // Fondo de las tarjetas: blanco ligeramente grisáceo.
+        papel: '#FCFDFD',
       },
       fontFamily: {
         script: ['Pacifico', 'Brush Script MT', 'Segoe Script', 'cursive'],
         caveat: ['Caveat', 'Segoe Script', 'cursive'],
+      },
+      boxShadow: {
+        card: '0 18px 45px -18px rgba(32, 91, 102, 0.18)',
+        suave: '0 8px 24px -12px rgba(32, 91, 102, 0.14)',
       },
     },
   },

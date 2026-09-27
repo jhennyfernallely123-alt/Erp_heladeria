@@ -49,16 +49,16 @@ const tones = {
         ghost: 'text-slate-600 hover:bg-slate-100',
         danger: 'bg-rose-600 text-white hover:bg-rose-700',
     },
-    brand: {
-        primary: 'bg-brand-600 text-white hover:bg-brand-700 shadow-sm shadow-brand-600/20',
+    aguamarina: {
+        primary: 'bg-aguamarina-500 text-white hover:bg-aguamarina-600 shadow-sm shadow-aguamarina-600/20',
         secondary: 'bg-white text-slate-700 border border-slate-300 hover:bg-slate-50',
-        ghost: 'text-brand-700 hover:bg-brand-50',
+        ghost: 'text-petrol-700 hover:bg-aguamarina-50',
         danger: 'bg-rose-600 text-white hover:bg-rose-700',
     },
 };
 
 const focusTones = {
     indigo: 'focus:ring-indigo-500',
-    brand: 'focus:ring-brand-500',
+    aguamarina: 'focus:ring-aguamarina-500',
 };
 </script>
