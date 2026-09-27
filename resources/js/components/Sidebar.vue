@@ -1,98 +1,49 @@
 <template>
-  <aside class="w-64 bg-slate-900 text-slate-100 flex flex-col min-h-screen shrink-0 select-none shadow-xl">
-    <!-- Brand -->
-    <div class="p-5 border-b border-slate-800 flex items-center space-x-3">
-      <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-pink-500 to-rose-400 flex items-center justify-center text-white shadow-lg shadow-pink-500/30 font-extrabold text-xl">
-        🍨
-      </div>
-      <div>
-        <h1 class="font-bold text-base leading-tight tracking-wide text-white">Nieve Real ERP</h1>
-        <p class="text-xs text-pink-400 font-medium">Heladería & POS</p>
-      </div>
-    </div>
-
-    <!-- Navigation -->
-    <nav class="flex-1 px-3 py-4 space-y-1 overflow-y-auto">
-      <router-link
-        to="/"
-        class="flex items-center px-3 py-2.5 text-sm font-medium rounded-lg transition-colors group"
-        :class="$route.name === 'pos' ? 'bg-pink-600 text-white font-semibold shadow-md' : 'text-slate-400 hover:text-white hover:bg-slate-800'"
-      >
-        <span class="mr-3 text-lg">🪑</span>
-        Mesas & Pedidos (POS)
-      </router-link>
-
-      <router-link
-        v-if="authStore.isCashier || authStore.isAdmin"
-        to="/productos"
-        class="flex items-center px-3 py-2.5 text-sm font-medium rounded-lg transition-colors group"
-        :class="$route.name === 'products' ? 'bg-pink-600 text-white font-semibold shadow-md' : 'text-slate-400 hover:text-white hover:bg-slate-800'"
-      >
-        <span class="mr-3 text-lg">🍦</span>
-        Productos & Stock
-      </router-link>
-
-      <router-link
-        v-if="authStore.isCashier || authStore.isAdmin"
-        to="/caja"
-        class="flex items-center px-3 py-2.5 text-sm font-medium rounded-lg transition-colors group"
-        :class="$route.name === 'cash-register' ? 'bg-pink-600 text-white font-semibold shadow-md' : 'text-slate-400 hover:text-white hover:bg-slate-800'"
-      >
-        <span class="mr-3 text-lg">💵</span>
-        Turno de Caja
-      </router-link>
-
-      <router-link
-        v-if="authStore.isAdmin"
-        to="/reportes"
-        class="flex items-center px-3 py-2.5 text-sm font-medium rounded-lg transition-colors group"
-        :class="$route.name === 'reports' ? 'bg-pink-600 text-white font-semibold shadow-md' : 'text-slate-400 hover:text-white hover:bg-slate-800'"
-      >
-        <span class="mr-3 text-lg">📊</span>
-        Finanzas & Reportes
-      </router-link>
-
-      <router-link
-        v-if="authStore.isAdmin"
-        to="/configuracion"
-        class="flex items-center px-3 py-2.5 text-sm font-medium rounded-lg transition-colors group"
-        :class="$route.name === 'settings' ? 'bg-pink-600 text-white font-semibold shadow-md' : 'text-slate-400 hover:text-white hover:bg-slate-800'"
-      >
-        <span class="mr-3 text-lg">⚙️</span>
-        Configuración & DIAN
-      </router-link>
-    </nav>
-
-    <!-- User & Logout -->
-    <div class="p-4 border-t border-slate-800 bg-slate-950/40">
-      <div class="flex items-center justify-between">
-        <div class="truncate mr-2">
-          <p class="text-xs font-semibold text-slate-200 truncate">{{ authStore.user?.name }}</p>
-          <span class="inline-block mt-0.5 px-2 py-0.5 text-[10px] font-bold uppercase rounded bg-pink-500/20 text-pink-300 border border-pink-500/30">
-            {{ authStore.user?.roles?.[0] || 'Usuario' }}
-          </span>
+    <aside class="w-64 bg-slate-900 text-slate-300 flex flex-col min-h-screen shrink-0 select-none">
+        <div class="h-16 px-5 flex items-center gap-3 border-b border-slate-800 shrink-0">
+            <div class="h-9 w-9 rounded-xl bg-indigo-600 flex items-center justify-center shrink-0">
+                <AppIcon :name="IceCreamBowl" :size="19" class="text-white" />
+            </div>
+            <div class="min-w-0">
+                <p class="text-sm font-bold text-white truncate leading-tight">Nieve Real</p>
+                <p class="text-[11px] text-slate-400">Heladería & POS</p>
+            </div>
         </div>
-        <button
-          @click="handleLogout"
-          class="p-2 text-slate-400 hover:text-rose-400 hover:bg-rose-500/10 rounded-lg transition"
-          title="Cerrar sesión"
-        >
-          🚪
-        </button>
-      </div>
-    </div>
-  </aside>
+
+        <nav class="flex-1 px-3 py-4 space-y-1 overflow-y-auto">
+            <router-link
+                v-for="item in items"
+                :key="item.name"
+                :to="item.route"
+                class="flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors"
+                :class="
+                    isActive(item)
+                        ? 'bg-indigo-600 text-white'
+                        : 'text-slate-400 hover:text-white hover:bg-slate-800'
+                "
+            >
+                <span
+                    class="w-1 h-5 rounded-r-full shrink-0"
+                    :class="isActive(item) ? 'bg-white' : 'bg-transparent'"
+                />
+                <AppIcon :name="item.icon" :size="17" class="shrink-0" />
+                <span class="truncate">{{ item.label }}</span>
+            </router-link>
+        </nav>
+    </aside>
 </template>
 
 <script setup>
+import { computed } from 'vue';
+import { useRoute } from 'vue-router';
+import { IceCreamBowl } from 'lucide-vue-next';
+import AppIcon from './ui/AppIcon.vue';
 import { useAuthStore } from '../stores/auth';
-import { useRouter } from 'vue-router';
+import { visibleNavItems } from '../config/navigation';
 
 const authStore = useAuthStore();
-const router = useRouter();
+const route = useRoute();
 
-const handleLogout = async () => {
-  await authStore.logout();
-  router.push('/login');
-};
+const items = computed(() => visibleNavItems(authStore.roles));
+const isActive = (item) => route.name === item.name;
 </script>
