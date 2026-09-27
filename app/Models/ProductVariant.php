@@ -14,14 +14,12 @@ class ProductVariant extends Model
         'name',
         'cost_price',
         'sale_price',
-        'stock_quantity',
         'is_active',
     ];
 
     protected $casts = [
         'cost_price' => 'decimal:2',
         'sale_price' => 'decimal:2',
-        'stock_quantity' => 'decimal:2',
         'is_active' => 'boolean',
     ];
 
@@ -33,5 +31,10 @@ class ProductVariant extends Model
     public function orderItems()
     {
         return $this->hasMany(OrderItem::class);
+    }
+
+    public function stock()
+    {
+        return $this->hasOne(ProductStock::class);
     }
 }

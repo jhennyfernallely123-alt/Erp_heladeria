@@ -4,20 +4,20 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Product extends Model
 {
     use HasFactory;
+    use SoftDeletes;
 
     protected $fillable = [
         'category_id',
         'name',
         'description',
+        'image',
         'cost_price',
         'sale_price',
-        'stock_type',
-        'stock_quantity',
-        'min_stock_alert',
         'has_variants',
         'is_active',
     ];
@@ -25,8 +25,6 @@ class Product extends Model
     protected $casts = [
         'cost_price' => 'decimal:2',
         'sale_price' => 'decimal:2',
-        'stock_quantity' => 'decimal:2',
-        'min_stock_alert' => 'decimal:2',
         'has_variants' => 'boolean',
         'is_active' => 'boolean',
     ];
@@ -46,8 +44,17 @@ class Product extends Model
         return $this->hasMany(OrderItem::class);
     }
 
+    public function stock()
+    {
+        return $this->hasOne(ProductStock::class);
+    }
+
     public function isLowStock(): bool
     {
-        return $this->stock_quantity <= $this->min_stock_alert;
+        if (!$this->stock) {
+            return false;
+        }
+
+        return $this->stock->status() !== 'normal';
     }
 }
