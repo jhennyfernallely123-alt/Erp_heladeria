@@ -46,7 +46,7 @@ class Product extends Model
 
     public function stock()
     {
-        return $this->hasOne(ProductStock::class);
+        return $this->hasOne(ProductStock::class)->whereNull('product_variant_id');
     }
 
     public function isLowStock(): bool

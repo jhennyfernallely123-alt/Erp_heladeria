@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\Product;
+use App\Models\ProductStock;
 use App\Models\ProductVariant;
 use Illuminate\Support\Collection;
 
@@ -10,36 +11,55 @@ class InventoryService
 {
     public function deductStock(Product $product, ?ProductVariant $variant, float $quantity): void
     {
-        if ($variant) {
-            $variant->decrement('stock_quantity', $quantity);
-        } else {
-            $product->decrement('stock_quantity', $quantity);
-        }
+        $stock = ProductStock::resolve($product, $variant);
+        $stock->decrement('quantity', $quantity);
+
+        $stock->movements()->create([
+            'type' => 'out',
+            'quantity' => $quantity,
+            'reason' => 'Venta',
+        ]);
     }
 
     public function restoreStock(Product $product, ?ProductVariant $variant, float $quantity): void
     {
-        if ($variant) {
-            $variant->increment('stock_quantity', $quantity);
-        } else {
-            $product->increment('stock_quantity', $quantity);
-        }
+        $stock = ProductStock::resolve($product, $variant);
+        $stock->increment('quantity', $quantity);
+
+        $stock->movements()->create([
+            'type' => 'in',
+            'quantity' => $quantity,
+            'reason' => 'Restitución',
+        ]);
     }
 
-    public function adjustStock(Product $product, ?ProductVariant $variant, float $newQuantity, string $reason = ''): void
-    {
-        if ($variant) {
-            $variant->update(['stock_quantity' => $newQuantity]);
-        } else {
-            $product->update(['stock_quantity' => $newQuantity]);
+    public function adjustStock(
+        Product $product,
+        ?ProductVariant $variant,
+        float $newQuantity,
+        string $reason = '',
+        ?int $userId = null
+    ): void {
+        $stock = ProductStock::resolve($product, $variant);
+        $delta = round($newQuantity - (float) $stock->quantity, 2);
+
+        $stock->update(['quantity' => $newQuantity]);
+
+        if ($delta !== 0.0) {
+            $stock->movements()->create([
+                'type' => 'adjustment',
+                'quantity' => $delta,
+                'reason' => $reason !== '' ? $reason : 'Ajuste manual',
+                'user_id' => $userId,
+            ]);
         }
     }
 
     public function getLowStockProducts(): Collection
     {
-        return Product::where('is_active', true)
-            ->whereColumn('stock_quantity', '<=', 'min_stock_alert')
-            ->with(['category', 'variants'])
+        return ProductStock::query()
+            ->with(['product.category', 'variant'])
+            ->whereColumn('quantity', '<=', 'min_alert')
             ->get();
     }
 }

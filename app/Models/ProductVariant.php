@@ -35,6 +35,6 @@ class ProductVariant extends Model
 
     public function stock()
     {
-        return $this->hasOne(ProductStock::class);
+        return $this->hasOne(ProductStock::class, 'product_variant_id');
     }
 }
