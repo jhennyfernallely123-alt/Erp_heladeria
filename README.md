@@ -131,17 +131,19 @@ Para levantar el entorno y comprobar los flujos:
 
 ```bash
 php artisan migrate:fresh --seed   # esquema + datos de demostración
-php artisan serve                  # http://127.0.0.1:8000
-npm run dev                        # frontend con recarga en caliente
+composer serve                     # http://127.0.0.1:8010
+npm run build                      # frontend compilado en public/build
 ```
 
-Credenciales del seed (la contraseña de todas es `password`):
+Para desarrollo con recarga en caliente, `npm run dev` levanta Vite y escribe `public/hot`. Ojo: mientras ese archivo exista, Laravel ignora `public/build` y sirve los assets desde el dev server. Si lo apagas sin borrar `public/hot`, la aplicación se queda en blanco. Para volver a los assets compilados: `Remove-Item public/hot` y `npm run build`.
+
+Credenciales del seed (la contraseña de todas es `password`). Las tres primeras aparecen como tarjetas de perfil en la pantalla de login:
 
 | Rol | Correo |
 |---|---|
 | Administrador | `admin@heladeria.com` |
-| Cajero | `cajero@heladeria.com` |
 | Mesero | `mesero@heladeria.com` |
+| Cajero | `cajero@heladeria.com` |
 | Cocina | `cocina@heladeria.com` |
 
 Comprobaciones recomendadas tras cada cambio:
