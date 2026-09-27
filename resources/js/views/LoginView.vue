@@ -1,253 +1,204 @@
 <template>
-    <div class="min-h-screen flex bg-aguamarina-100 font-sans">
-        <!-- ============ PANEL IZQUIERDO DECORATIVO ============ -->
-        <div
-            class="hidden lg:flex lg:w-1/2 relative overflow-hidden bg-aguamarina-100 select-none"
-        >
-            <!-- Formas orgánicas de fondo -->
-            <div class="absolute -top-28 -left-20 w-[26rem] h-[26rem] rounded-full bg-aguamarina-200/45" />
-            <div class="absolute -bottom-40 -right-24 w-[30rem] h-[30rem] rounded-full bg-aguamarina-200/35" />
-            <div class="absolute top-1/4 -left-16 w-72 h-72 rounded-full bg-aguamarina-50/50" />
-            <svg
-                class="absolute bottom-0 left-0 w-full text-aguamarina-200/40"
-                viewBox="0 0 600 200"
-                preserveAspectRatio="none"
-                aria-hidden="true"
-            >
-                <path
-                    d="M0 140c80-30 150 20 230 0s120-70 200-40 110 60 170 40v60H0z"
-                    fill="currentColor"
-                    opacity="0.5"
-                />
-            </svg>
-
-            <div class="relative flex-1 flex flex-col items-center px-10 pt-10 pb-8">
-                <!-- Ilustración superior: helado de cono -->
-                <div class="h-28 w-24 shrink-0">
+    <div class="login-page">
+        <!-- ============ PANEL IZQUIERDO ============ -->
+        <section class="brand-panel">
+            <div class="brand-content">
+                <div class="logo-icon">
                     <IceCreamConeArt />
                 </div>
 
-                <!-- Nombre de la heladería -->
-                <h1 class="font-script text-petrol-700 text-[2.75rem] leading-none mt-4">
-                    Dulce Helado
-                </h1>
+                <h1 class="brand-name">Dulce Helado</h1>
 
-                <!-- Eslogan en dos líneas -->
-                <p class="mt-3 text-center text-petrol-500/85 text-[1.0625rem] font-medium leading-relaxed">
+                <p class="brand-subtitle">
                     Más que helados,<br />
                     momentos felices
                 </p>
 
-                <!-- Corazón turquesa -->
-                <AppIcon :name="Heart" :size="22" class="mt-3 text-aguamarina-400 fill-aguamarina-300" />
-
-                <!-- Ilustración central: vaso con corazón -->
-                <div class="mt-6 w-[19rem] max-w-full shrink-0">
-                    <IceCreamCupArt />
+                <div class="heart-divider">
+                    <AppIcon :name="Heart" :size="24" class="fill-aguamarina-500 text-aguamarina-500" />
                 </div>
 
-                <!-- Mensaje manuscrito en la zona derecha -->
-                <div class="absolute right-[6%] top-[54%] max-w-[11rem]">
-                    <p
-                        class="font-caveat text-[1.375rem] leading-tight text-aguamarina-700 -rotate-6"
-                    >
+                <div class="illustration-area">
+                    <!-- Ilustracion: recipiente con bolas de helado -->
+                    <div class="icecream-art">
+                        <div class="icecream-bowl">
+                            <div class="cone" />
+
+                            <div class="icecream-scoops">
+                                <div class="scoop chocolate" />
+                                <div class="scoop strawberry" />
+                                <div class="scoop vanilla" />
+
+                                <div class="topping">
+                                    <svg viewBox="0 0 24 24" class="h-full w-full" aria-hidden="true">
+                                        <path
+                                            d="M12 8c-3-2.2-6.5.6-6.5 4.1C5.5 15.6 8.6 19 12 22c3.4-3 6.5-6.4 6.5-9.9C18.5 8.6 15 5.8 12 8z"
+                                            fill="#E4685D"
+                                        />
+                                        <path
+                                            d="M12 8c-.6-1.6-.2-3.4 1.2-4.4 1.2-.8 2.6-.7 3.6-.2-1 .9-1.4 2.1-1.2 3.2.2 1 .8 1.6 1.6 2z"
+                                            fill="#6FA25F"
+                                        />
+                                        <ellipse
+                                            cx="9.4"
+                                            cy="12.4"
+                                            rx="1.3"
+                                            ry="1.9"
+                                            fill="#FFFFFF"
+                                            opacity="0.5"
+                                            transform="rotate(-24 9.4 12.4)"
+                                        />
+                                    </svg>
+                                </div>
+                            </div>
+
+                            <div class="bowl">
+                                <svg viewBox="0 0 24 22" class="h-full w-full" aria-hidden="true">
+                                    <path
+                                        d="M12 20.5C10.5 19 3 12.6 3 8.3 3 5.1 5.5 3 8.4 3c1.9 0 3 .9 3.6 2 .6-1.1 1.7-2 3.6-2 2.9 0 5.4 2.1 5.4 5.3 0 4.3-7.5 10.7-9 12.2z"
+                                        fill="none"
+                                        stroke="#FFFFFF"
+                                        stroke-width="2"
+                                        stroke-linejoin="round"
+                                    />
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Mensaje decorativo -->
+                    <div class="welcome-note">
                         ¡Bienvenido<br />
                         a tu heladería<br />
                         favorita!
-                    </p>
-                    <div class="mt-1.5 flex items-center gap-1.5 pl-3">
-                        <span class="h-px w-8 bg-aguamarina-400/70" />
-                        <AppIcon :name="Heart" :size="15" class="text-aguamarina-400 fill-aguamarina-300" />
-                        <span class="h-px w-5 bg-aguamarina-400/70" />
-                    </div>
-                </div>
-
-                <!-- Mensaje manuscrito superior derecho -->
-                <div class="absolute right-[7%] top-[12%] max-w-[10rem] text-right">
-                    <p class="font-caveat text-[1.125rem] leading-tight text-aguamarina-600/90 rotate-3">
-                        ¡El sabor también<br />
-                        se administra!
-                    </p>
-                </div>
-            </div>
-
-            <!-- Elementos informativos del pie, con separadores verticales -->
-            <div class="relative px-10 pb-9">
-                <div class="flex items-stretch justify-center">
-                    <div
-                        v-for="(feature, index) in features"
-                        :key="feature.label"
-                        class="flex items-center gap-2 px-7"
-                        :class="index > 0 ? 'border-l border-aguamarina-300/50' : ''"
-                    >
-                        <AppIcon :name="feature.icon" :size="19" class="text-petrol-500 shrink-0" />
-                        <span class="text-[0.6875rem] font-semibold text-petrol-600/90 leading-tight max-w-[4.5rem]">
-                            {{ feature.label }}
-                        </span>
+                        <span class="note-hearts">♡ ─ ♥ ─</span>
                     </div>
                 </div>
             </div>
-        </div>
 
-        <!-- ============ LADO DERECHO: TARJETA ============ -->
-        <div
-            class="relative w-full lg:w-1/2 flex items-center justify-center bg-aguamarina-50 px-5 pb-8 pt-28 sm:px-8 lg:py-8"
-        >
-            <div
-                class="w-full max-w-[23rem] bg-papel rounded-2xl shadow-card px-7 py-8 sm:px-8 sm:py-9"
-            >
-                <!-- Encabezado -->
-                <h2 class="text-center text-[1.5rem] font-semibold text-petrol-700 leading-tight">
-                    Inicia sesión
-                </h2>
-                <p class="mt-1.5 text-center text-[0.6875rem] leading-relaxed text-niebla-400">
-                    Selecciona tu perfil e ingresa tus credenciales<br class="hidden sm:block" />
-                    para continuar.
-                </p>
+            <!-- Beneficios inferiores -->
+            <div class="brand-footer">
+                <div
+                    v-for="feature in features"
+                    :key="feature.label"
+                    class="feature"
+                >
+                    <span class="feature-icon">
+                        <AppIcon :name="feature.icon" :size="21" />
+                    </span>
+                    <span v-html="feature.label" />
+                </div>
+            </div>
+        </section>
 
-                <!-- Selector de perfiles -->
-                <div class="mt-6 grid grid-cols-3 gap-2.5">
+        <!-- ============ PANEL DERECHO ============ -->
+        <section class="form-panel">
+            <div class="top-note">
+                ¡El sabor<br />
+                también se<br />
+                administra!
+                <AppIcon
+                    :name="Heart"
+                    :size="13"
+                    class="fill-aguamarina-600 text-aguamarina-600 inline-block align-baseline"
+                />
+            </div>
+
+            <div class="login-card">
+                <header class="form-header">
+                    <h2>
+                        Inicia sesión
+                        <AppIcon
+                            :name="Sparkles"
+                            :size="16"
+                            class="inline-block align-baseline text-aguamarina-300"
+                        />
+                    </h2>
+                    <p>
+                        Selecciona tu perfil e ingresa tus credenciales<br />
+                        para continuar.
+                    </p>
+                </header>
+
+                <!-- Perfiles -->
+                <div class="roles">
                     <button
                         v-for="role in roles"
                         :key="role.email"
                         type="button"
-                        class="group rounded-[10px] border px-2 py-3 text-center transition-all"
-                        :class="
-                            email === role.email
-                                ? 'bg-aguamarina-50 border-aguamarina-400 shadow-sm'
-                                : 'bg-white border-slate-200 hover:border-aguamarina-300'
-                        "
+                        class="role-card"
+                        :class="{ active: email === role.email }"
                         :aria-pressed="email === role.email"
                         @click="selectRole(role)"
                     >
-                        <span
-                            class="mx-auto mb-1.5 flex h-8 w-8 items-center justify-center rounded-lg transition-colors"
-                            :class="
-                                email === role.email
-                                    ? 'bg-aguamarina-500 text-white'
-                                    : 'bg-petrol-50 text-petrol-500 group-hover:bg-aguamarina-50 group-hover:text-aguamarina-600'
-                            "
-                        >
-                            <AppIcon :name="role.icon" :size="17" />
+                        <span class="role-icon">
+                            <AppIcon :name="role.icon" :size="27" />
                         </span>
-                        <p class="text-[0.8125rem] font-semibold leading-tight text-petrol-700">
-                            {{ role.name }}
-                        </p>
-                        <p class="mt-0.5 text-[0.625rem] leading-tight text-niebla-400">
-                            {{ role.description }}
-                        </p>
+                        <span class="role-name">{{ role.name }}</span>
+                        <span class="role-description" v-html="role.description" />
                     </button>
                 </div>
 
-                <!-- Error -->
-                <p
-                    v-if="error"
-                    class="mt-4 flex items-start gap-1.5 rounded-[10px] border border-rose-200 bg-rose-50 px-3 py-2 text-[0.6875rem] font-medium leading-snug text-rose-600"
-                >
-                    <AppIcon :name="AlertCircle" :size="14" class="shrink-0 mt-px" />
-                    {{ error }}
-                </p>
-
-                <!-- Campos -->
-                <form class="mt-5 space-y-3" @submit.prevent="submitLogin">
-                    <!-- Usuario -->
-                    <div
-                        class="flex items-center gap-2.5 rounded-[10px] border bg-white px-3 py-2 transition-colors"
-                        :class="
-                            error && !email ? 'border-rose-300' : 'border-slate-200 focus-within:border-aguamarina-400 focus-within:ring-2 focus-within:ring-aguamarina-200'
-                        "
-                    >
-                        <span
-                            class="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-petrol-50 text-petrol-600"
-                        >
-                            <AppIcon :name="User" :size="17" />
+                <!-- Formulario -->
+                <form class="login-form" @submit.prevent="submitLogin">
+                    <div class="input-group" :class="{ invalid: error && !email }">
+                        <span class="input-icon">
+                            <AppIcon :name="User" :size="18" />
                         </span>
-                        <div class="min-w-0 flex-1">
+                        <span class="input-content">
                             <input
                                 v-model="email"
                                 type="email"
-                                required
-                                autocomplete="username"
+                                name="username"
                                 placeholder="Usuario"
-                                class="w-full border-0 bg-transparent p-0 text-[0.8125rem] text-petrol-700 placeholder:text-petrol-400 focus:outline-none focus:ring-0"
+                                autocomplete="username"
+                                required
                             />
-                            <p class="text-[0.625rem] leading-tight text-niebla-300">
-                                Ingresa tu usuario
-                            </p>
-                        </div>
+                            <small>Ingresa tu usuario</small>
+                        </span>
                     </div>
 
-                    <!-- Contraseña -->
-                    <div
-                        class="flex items-center gap-2.5 rounded-[10px] border bg-white px-3 py-2 transition-colors"
-                        :class="
-                            error && !password
-                                ? 'border-rose-300'
-                                : 'border-slate-200 focus-within:border-aguamarina-400 focus-within:ring-2 focus-within:ring-aguamarina-200'
-                        "
-                    >
-                        <span
-                            class="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-petrol-50 text-petrol-600"
-                        >
-                            <AppIcon :name="Lock" :size="17" />
+                    <div class="input-group" :class="{ invalid: error && !password }">
+                        <span class="input-icon">
+                            <AppIcon :name="Lock" :size="18" />
                         </span>
-                        <div class="min-w-0 flex-1">
+                        <span class="input-content">
                             <input
                                 v-model="password"
                                 :type="showPassword ? 'text' : 'password'"
-                                required
-                                autocomplete="current-password"
+                                name="password"
                                 placeholder="Contraseña"
-                                class="w-full border-0 bg-transparent p-0 text-[0.8125rem] text-petrol-700 placeholder:text-petrol-400 focus:outline-none focus:ring-0"
+                                autocomplete="current-password"
+                                required
                             />
-                            <p class="text-[0.625rem] leading-tight text-niebla-300">
-                                Ingresa tu contraseña
-                            </p>
-                        </div>
+                            <small>Ingresa tu contraseña</small>
+                        </span>
                         <button
                             type="button"
-                            class="shrink-0 p-1 rounded-md text-niebla-300 hover:text-petrol-500 transition-colors"
+                            class="toggle-password"
                             :aria-label="showPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'"
                             @click="showPassword = !showPassword"
                         >
-                            <AppIcon :name="showPassword ? EyeOff : Eye" :size="16" />
+                            <AppIcon :name="showPassword ? EyeOff : Eye" :size="17" />
                         </button>
                     </div>
 
-                    <AppButton
-                        type="submit"
-                        class="w-full"
-                        label="Ingresar"
-                        :icon="ArrowRight"
-                        :icon-size="17"
-                        :loading="loading"
-                        :loading-text="'Ingresando...'"
-                        variant="primary"
-                        tone="aguamarina"
-                    />
+                    <p v-if="error" class="message show">{{ error }}</p>
+
+                    <button type="submit" class="login-button" :disabled="loading">
+                        <AppIcon :name="ArrowRight" :size="19" />
+                        {{ loading ? 'Ingresando...' : 'Ingresar' }}
+                    </button>
                 </form>
 
-                <!-- Pie de tarjeta -->
-                <div class="mt-6 flex items-center gap-3">
-                    <span class="h-px flex-1 bg-slate-200" />
-                    <span class="flex items-center gap-1.5 text-[0.6875rem] font-medium text-niebla-400">
-                        <AppIcon :name="IceCreamBowl" :size="15" class="text-petrol-500" />
+                <footer class="card-footer">
+                    <div class="footer-brand">
+                        <AppIcon :name="IceCreamBowl" :size="16" class="text-petrol-600" />
                         Dulce Helado
-                    </span>
-                    <span class="h-px flex-1 bg-slate-200" />
-                </div>
-            </div>
-
-            <!-- Marca solo en móvil -->
-            <div class="absolute left-0 right-0 top-6 flex justify-center lg:hidden">
-                <div class="flex flex-col items-center">
-                    <div class="h-11 w-11 rounded-xl bg-white shadow-suave flex items-center justify-center">
-                        <AppIcon :name="IceCreamCone" :size="22" class="text-aguamarina-600" />
                     </div>
-                    <p class="font-script text-[1.5rem] text-petrol-700 mt-1.5">Dulce Helado</p>
-                </div>
+                </footer>
             </div>
-        </div>
+        </section>
     </div>
 </template>
 
@@ -255,24 +206,22 @@
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 import {
-    AlertCircle,
     ArrowRight,
     Eye,
     EyeOff,
     Heart,
     IceCreamBowl,
-    IceCreamCone,
     Leaf,
+    Lock,
     ShieldCheck,
+    Sparkles,
     Smile,
     User,
     UserRound,
     Wallet,
 } from 'lucide-vue-next';
-import AppButton from '../components/ui/AppButton.vue';
 import AppIcon from '../components/ui/AppIcon.vue';
 import IceCreamConeArt from '../components/login/IceCreamConeArt.vue';
-import IceCreamCupArt from '../components/login/IceCreamCupArt.vue';
 import { useAuthStore } from '../stores/auth';
 
 const authStore = useAuthStore();
@@ -294,7 +243,7 @@ const roles = [
     {
         name: 'Mesero',
         email: 'mesero@heladeria.com',
-        description: 'Toma de pedidos y atención en sala',
+        description: 'Toma de pedidos<br>y atención en sala',
         icon: UserRound,
     },
     {
@@ -306,9 +255,9 @@ const roles = [
 ];
 
 const features = [
-    { label: 'Helados de calidad', icon: IceCreamBowl },
-    { label: 'Ingredientes frescos', icon: Leaf },
-    { label: 'Clientes felices', icon: Smile },
+    { label: 'Helados<br>de calidad', icon: IceCreamBowl },
+    { label: 'Ingredientes<br>frescos', icon: Leaf },
+    { label: 'Clientes<br>felices', icon: Smile },
 ];
 
 const selectRole = (role) => {
@@ -323,7 +272,7 @@ const submitLogin = async () => {
 
     try {
         await authStore.login(email.value, password.value);
-        // El destino lo decide el guard de rutas según los roles del usuario.
+        // El destino lo decide el guard de rutas segun los roles del usuario.
         router.push('/');
     } catch (err) {
         error.value = err.response?.data?.message || 'Credenciales inválidas';
@@ -332,3 +281,580 @@ const submitLogin = async () => {
     }
 };
 </script>
+
+<style scoped>
+.login-page {
+    min-height: 100vh;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    overflow: hidden;
+    position: relative;
+    background: linear-gradient(120deg, #e1f4f1 0%, #d5f1ed 100%);
+    font-family: 'Plus Jakarta Sans', 'Segoe UI', Arial, sans-serif;
+    color: #245c65;
+}
+
+/* ============ PANEL IZQUIERDO ============ */
+.brand-panel {
+    position: relative;
+    min-height: 100vh;
+    padding: 35px 45px 30px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    overflow: hidden;
+}
+
+/* Formas decorativas del fondo */
+.brand-panel::before {
+    content: '';
+    position: absolute;
+    width: 580px;
+    height: 350px;
+    top: -120px;
+    right: -170px;
+    background: rgba(115, 207, 196, 0.15);
+    border-radius: 48% 52% 64% 36%;
+    transform: rotate(-20deg);
+}
+
+.brand-panel::after {
+    content: '';
+    position: absolute;
+    width: 750px;
+    height: 240px;
+    bottom: -130px;
+    left: -170px;
+    background: #a7dfd9;
+    border-radius: 48% 52% 0 0;
+    transform: rotate(-7deg);
+}
+
+.brand-content,
+.brand-footer {
+    position: relative;
+    z-index: 1;
+}
+
+.brand-content {
+    width: 100%;
+    max-width: 510px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.logo-icon {
+    width: 78px;
+    height: 84px;
+    margin-bottom: 5px;
+    filter: drop-shadow(0 4px 2px rgba(35, 107, 115, 0.12));
+}
+
+/* ============ LOGO Y NOMBRE ============ */
+.brand-name {
+    font-family: Pacifico, 'Brush Script MT', 'Segoe Script', cursive;
+    font-size: clamp(38px, 4vw, 58px);
+    font-weight: 400;
+    font-style: italic;
+    color: #236b73;
+    line-height: 1.1;
+    text-align: center;
+    margin: 0;
+}
+
+.brand-subtitle {
+    font-size: 17px;
+    line-height: 1.4;
+    color: #5e858b;
+    text-align: center;
+    margin-top: 10px;
+}
+
+.heart-divider {
+    margin-top: 5px;
+    display: flex;
+    justify-content: center;
+}
+
+/* ============ ZONA DE ILUSTRACIONES ============ */
+.illustration-area {
+    width: 100%;
+    min-height: 310px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    align-items: center;
+    gap: 5px;
+    margin-top: 10px;
+}
+
+.icecream-art {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-width: 0;
+}
+
+.icecream-bowl {
+    position: relative;
+    width: 220px;
+    height: 220px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-end;
+}
+
+.icecream-scoops {
+    position: relative;
+    z-index: 2;
+    width: 100%;
+    height: 125px;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+}
+
+.scoop {
+    width: 100px;
+    height: 105px;
+    border-radius: 50% 50% 42% 42%;
+    position: relative;
+    margin: 0 -13px;
+    box-shadow: inset -7px -8px 0 rgba(0, 0, 0, 0.05);
+}
+
+/* Reflejo de cada bola */
+.scoop::after {
+    content: '';
+    position: absolute;
+    width: 18px;
+    height: 13px;
+    top: 24px;
+    left: 24px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.35);
+}
+
+.scoop.chocolate {
+    background: #73503e;
+    transform: rotate(-10deg);
+}
+
+.scoop.strawberry {
+    background: #ffaaa9;
+    transform: translateY(-20px);
+}
+
+.scoop.vanilla {
+    background: #f7e3b9;
+    transform: rotate(10deg);
+}
+
+.topping {
+    position: absolute;
+    z-index: 3;
+    top: 2px;
+    left: 35%;
+    width: 30px;
+    height: 30px;
+}
+
+.cone {
+    position: absolute;
+    z-index: 1;
+    width: 38px;
+    height: 110px;
+    top: 100px;
+    left: 17px;
+    background: repeating-linear-gradient(135deg, #d99b55 0px, #d99b55 7px, #f1c58b 8px, #f1c58b 12px);
+    clip-path: polygon(0 0, 100% 0, 50% 100%);
+    transform: rotate(-12deg);
+}
+
+.bowl {
+    position: relative;
+    z-index: 4;
+    width: 190px;
+    height: 100px;
+    margin-top: -10px;
+    background: linear-gradient(120deg, #64c6be, #43b2aa);
+    border-radius: 10px 10px 45% 45%;
+    box-shadow: 0 10px 18px rgba(43, 121, 118, 0.16);
+    border-top: 7px solid #9fe0d9;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.bowl svg {
+    width: 52px;
+    height: 48px;
+}
+
+/* Mensaje decorativo */
+.welcome-note {
+    font-family: Caveat, 'Brush Script MT', 'Segoe Script', cursive;
+    font-size: 25px;
+    line-height: 1.25;
+    font-style: italic;
+    color: #236b73;
+    transform: rotate(-5deg);
+    text-align: center;
+    padding: 10px;
+}
+
+.note-hearts {
+    display: block;
+    font-size: 22px;
+    margin-top: 8px;
+    color: #236b73;
+}
+
+/* ============ BENEFICIOS INFERIORES ============ */
+.brand-footer {
+    width: 100%;
+    max-width: 490px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    margin-top: 20px;
+    padding-bottom: 5px;
+}
+
+.feature {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 10px;
+    line-height: 1.4;
+    color: #245c65;
+}
+
+.feature-icon {
+    display: flex;
+    color: #159b9b;
+}
+
+/* ============ PANEL DERECHO ============ */
+.form-panel {
+    min-height: 100vh;
+    padding: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    z-index: 1;
+}
+
+.login-card {
+    width: 100%;
+    max-width: 430px;
+    background: rgba(255, 255, 255, 0.94);
+    border-radius: 13px;
+    padding: 35px 25px 28px;
+    box-shadow: 0 12px 35px rgba(47, 117, 117, 0.09);
+}
+
+/* ============ ENCABEZADO ============ */
+.form-header {
+    text-align: center;
+    margin-bottom: 24px;
+}
+
+.form-header h2 {
+    font-size: 25px;
+    font-weight: 700;
+    color: #204f59;
+    margin: 0 0 5px;
+}
+
+.form-header p {
+    font-size: 12px;
+    line-height: 1.5;
+    color: #718995;
+}
+
+/* ============ PERFILES ============ */
+.roles {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    margin-bottom: 23px;
+}
+
+.role-card {
+    min-height: 105px;
+    border: 1px solid #dce8eb;
+    background: #fff;
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 10px 5px;
+    cursor: pointer;
+    color: #245c65;
+    transition: all 0.2s ease;
+}
+
+.role-card:hover {
+    border-color: #4ba9a6;
+    background: #f3fbfa;
+    transform: translateY(-2px);
+}
+
+.role-card.active {
+    border: 1px solid #4ba9a6;
+    background: #dff5f1;
+    box-shadow: 0 3px 10px rgba(75, 169, 166, 0.08);
+}
+
+.role-icon {
+    display: flex;
+    margin-bottom: 6px;
+    color: #236b73;
+}
+
+.role-name {
+    font-size: 12px;
+    font-weight: 500;
+    margin-bottom: 4px;
+}
+
+.role-description {
+    font-size: 9px;
+    line-height: 1.3;
+    color: #718995;
+    text-align: center;
+}
+
+/* ============ CAMPOS ============ */
+.login-form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.input-group {
+    display: flex;
+    align-items: stretch;
+    width: 100%;
+    height: 50px;
+    border: 1px solid #dce8eb;
+    border-radius: 10px;
+    overflow: hidden;
+    background: #fff;
+    transition: border 0.2s ease, box-shadow 0.2s ease;
+}
+
+.input-group:focus-within {
+    border-color: #4ba9a6;
+    box-shadow: 0 0 0 3px rgba(75, 169, 166, 0.08);
+}
+
+.input-group.invalid {
+    border-color: #e8a99a;
+}
+
+.input-icon {
+    width: 45px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #f4f8f9;
+    border-right: 1px solid #edf1f2;
+    color: #236b73;
+}
+
+.input-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 0 10px;
+    min-width: 0;
+}
+
+.input-content input {
+    width: 100%;
+    border: none;
+    outline: none;
+    background: transparent;
+    font-size: 12px;
+    color: #245c65;
+    padding: 0;
+}
+
+.input-content input::placeholder {
+    color: #879ca7;
+}
+
+.input-content small {
+    font-size: 9px;
+    color: #718995;
+    margin-top: 3px;
+}
+
+.toggle-password {
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    padding: 0 12px;
+    color: #78919b;
+    display: flex;
+    align-items: center;
+}
+
+/* ============ BOTON ============ */
+.login-button {
+    width: 100%;
+    height: 43px;
+    margin-top: 8px;
+    border: none;
+    border-radius: 9px;
+    background: linear-gradient(90deg, #48a9a6, #4eaaa6);
+    color: #fff;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    transition: all 0.2s ease;
+}
+
+.login-button:hover:not(:disabled) {
+    background: #328f8c;
+    transform: translateY(-1px);
+    box-shadow: 0 5px 12px rgba(75, 169, 166, 0.2);
+}
+
+.login-button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+/* ============ PIE ============ */
+.card-footer {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 23px;
+    color: #718995;
+    font-size: 10px;
+}
+
+.card-footer::before,
+.card-footer::after {
+    content: '';
+    height: 1px;
+    background: #e3ecee;
+    flex: 1;
+}
+
+.footer-brand {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    white-space: nowrap;
+}
+
+/* ============ MENSAJES ============ */
+.message {
+    padding: 10px;
+    border-radius: 8px;
+    font-size: 12px;
+    text-align: center;
+    margin-top: 5px;
+    background: #fff0ed;
+    color: #a74635;
+}
+
+/* ============ DECORACIONES ============ */
+.top-note {
+    position: absolute;
+    top: 28px;
+    right: 28px;
+    font-family: Caveat, 'Brush Script MT', cursive;
+    color: #236b73;
+    font-size: 14px;
+    transform: rotate(-8deg);
+    text-align: center;
+}
+
+/* ============ RESPONSIVE ============ */
+@media (max-width: 1000px) {
+    .brand-panel {
+        padding: 30px 20px;
+    }
+
+    .form-panel {
+        padding: 20px;
+    }
+
+    .illustration-area {
+        grid-template-columns: 1fr;
+    }
+
+    .welcome-note {
+        display: none;
+    }
+
+    .icecream-bowl {
+        transform: scale(0.9);
+    }
+}
+
+@media (max-width: 760px) {
+    .login-page {
+        grid-template-columns: 1fr;
+    }
+
+    .brand-panel {
+        display: none;
+    }
+
+    .form-panel {
+        min-height: 100vh;
+        padding: 22px 15px;
+    }
+
+    .login-card {
+        max-width: 430px;
+        padding: 30px 20px;
+    }
+
+    .top-note {
+        display: none;
+    }
+}
+
+@media (max-width: 380px) {
+    .roles {
+        gap: 6px;
+    }
+
+    .role-card {
+        padding: 8px 3px;
+    }
+
+    .role-name {
+        font-size: 11px;
+    }
+
+    .role-description {
+        font-size: 8px;
+    }
+
+    .login-card {
+        padding: 25px 15px;
+    }
+}
+</style>
