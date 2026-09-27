@@ -123,14 +123,33 @@ Todos los usuarios cuentan con la contraseña genérica: `password`
 
 ---
 
-## 5. Pruebas Automatizadas
-Ejecuta la suite completa de Feature Tests:
+## 5. Verificación
+
+El proyecto **no incluye pruebas automatizadas**. La validación se hace de forma manual sobre la aplicación en marcha.
+
+Para levantar el entorno y comprobar los flujos:
+
 ```bash
-php artisan test
+php artisan migrate:fresh --seed   # esquema + datos de demostración
+php artisan serve                  # http://127.0.0.1:8000
+npm run dev                        # frontend con recarga en caliente
 ```
-Incluye pruebas para:
-- `AuthenticationTest`: Validación de login y protección de rutas.
-- `ProductInventoryTest`: Manejo de variantes y cálculo de stock.
-- `OrderFlowTest`: Ciclo de vida y transición de mesas.
-- `InvoicingProviderTest`: Generación de PDF térmico y cálculo de CUFE DIAN.
-- `CashRegisterTest`: Balance de apertura, gastos y cálculo de descuadre en cierre.
+
+Credenciales del seed (la contraseña de todas es `password`):
+
+| Rol | Correo |
+|---|---|
+| Administrador | `admin@heladeria.com` |
+| Cajero | `cajero@heladeria.com` |
+| Mesero | `mesero@heladeria.com` |
+| Cocina | `cocina@heladeria.com` |
+
+Comprobaciones recomendadas tras cada cambio:
+
+- El catálogo de **Productos** no expone ningún dato de stock: ni columnas, ni filtros, ni campos del formulario. El stock vive únicamente en **Inventario**.
+- `GET /api/v1/products` no devuelve `stock_quantity`, `min_stock_alert` ni `stock_type` en el JSON. Conviene comprobarlo sobre el JSON crudo y no solo en la interfaz, porque un fallo de relación Eloquent se manifiesta como `null` silencioso.
+- Un pedido descuenta stock y su cancelación lo restituye.
+- Borrar un producto que ya se vendió no destruye su historial de ventas.
+- `npm run build` compila sin errores.
+
+El detalle completo está en `docs/superpowers/specs/2026-09-27-modulo-productos-independiente-stock-design.md`, sección 8.
