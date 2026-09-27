@@ -27,6 +27,12 @@ const routes = [
         meta: { requiresAuth: true, roles: ['admin', 'cashier'] },
     },
     {
+        path: '/inventario',
+        name: 'inventory',
+        component: () => import('../views/InventoryView.vue'),
+        meta: { requiresAuth: true, roles: ['admin'] },
+    },
+    {
         path: '/caja',
         name: 'cash-register',
         component: () => import('../views/CashRegisterView.vue'),

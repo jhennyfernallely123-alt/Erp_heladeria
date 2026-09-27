@@ -110,8 +110,10 @@ class IceCreamCatalogSeeder extends Seeder
             'has_variants' => false,
         ], 150, 30);
 
-        // 4 unidades con mínimo 10: queda en estado crítico a propósito para que
-        // la pantalla de Inventario tenga una fila que destacar.
+        // 4 unidades con mínimo 10: queda en estado "Bajo" a propósito, para que
+        // la pantalla de Inventario tenga una fila que destacar. Para un estado
+        // "Crítico" hace falta cantidad 0, que en un catálogo real signifies
+        // producto agotado y no una alerta de reposición.
         $this->makeProduct('Salsa Caliente de Arequipe', $catToppings, [
             'description' => 'Porción de salsa caliente de arequipe tradicional',
             'cost_price' => 800,

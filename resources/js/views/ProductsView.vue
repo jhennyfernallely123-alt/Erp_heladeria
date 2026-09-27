@@ -1,192 +1,252 @@
 <template>
-  <div class="p-6 max-w-7xl mx-auto space-y-6">
-    <!-- Header -->
-    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-      <div>
-        <h1 class="text-2xl font-black text-slate-800 tracking-tight">Catálogo de Productos & Inventario</h1>
-        <p class="text-xs text-slate-500 mt-1">Gestión de helados, sabores, variantes de tamaño y alertas de stock</p>
-      </div>
+    <div class="p-6 max-w-7xl mx-auto space-y-6">
+        <PageHeader title="Productos" subtitle="Catálogo de helado, bebidas y postres">
+            <template #actions>
+                <AppButton label="Nuevo producto" :icon="Plus" @click="openCreate" />
+            </template>
+        </PageHeader>
 
-      <button
-        @click="openCreateModal"
-        class="px-4 py-2.5 bg-pink-600 hover:bg-pink-700 text-white font-bold rounded-xl shadow-lg shadow-pink-600/20 text-xs flex items-center space-x-2"
-      >
-        <span>+ Nuevo Producto</span>
-      </button>
-    </div>
-
-    <!-- Filters & Search -->
-    <div class="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-sm flex flex-wrap items-center justify-between gap-3">
-      <div class="flex items-center space-x-3 flex-1 min-w-[260px]">
-        <input
-          v-model="searchQuery"
-          type="text"
-          placeholder="Buscar helado o producto..."
-          class="w-full text-xs px-3.5 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-pink-500 focus:outline-none"
-        />
-        <select
-          v-model="selectedCategory"
-          class="text-xs px-3 py-2.5 rounded-xl border border-slate-300 bg-white"
+        <div
+            class="bg-white rounded-2xl border border-slate-200 shadow-sm p-4 flex flex-wrap items-center gap-3"
         >
-          <option :value="null">Todas las categorías</option>
-          <option v-for="cat in categories" :key="cat.id" :value="cat.id">{{ cat.name }}</option>
-        </select>
-      </div>
-
-      <div class="flex items-center space-x-2">
-        <label class="flex items-center space-x-2 text-xs font-semibold text-slate-700 cursor-pointer">
-          <input
-            type="checkbox"
-            v-model="onlyLowStock"
-            class="w-4 h-4 text-pink-600 rounded border-slate-300 focus:ring-pink-500"
-          />
-          <span>🚨 Solo Stock Crítico / Bajo</span>
-        </label>
-      </div>
-    </div>
-
-    <!-- Products Table -->
-    <div class="bg-white rounded-2xl border border-slate-200/80 shadow-sm overflow-hidden">
-      <table class="w-full text-left border-collapse text-xs">
-        <thead>
-          <tr class="bg-slate-50 text-slate-500 font-bold border-b border-slate-200 uppercase tracking-wider text-[10px]">
-            <th class="p-3.5">Producto</th>
-            <th class="p-3.5">Categoría</th>
-            <th class="p-3.5 text-right">Precio Costo</th>
-            <th class="p-3.5 text-right">Precio Venta</th>
-            <th class="p-3.5 text-right">Margen Estimado</th>
-            <th class="p-3.5 text-center">Stock Actual</th>
-            <th class="p-3.5 text-right">Acciones</th>
-          </tr>
-        </thead>
-        <tbody class="divide-y divide-slate-100 font-medium text-slate-700">
-          <tr v-for="prod in filteredProducts" :key="prod.id" class="hover:bg-slate-50 transition">
-            <td class="p-3.5">
-              <span class="font-bold text-slate-800 text-sm block">{{ prod.name }}</span>
-              <span class="text-[11px] text-slate-400">{{ prod.description }}</span>
-              <span v-if="prod.has_variants" class="inline-block mt-0.5 text-[10px] text-pink-600 font-bold bg-pink-50 px-1.5 py-0.5 rounded">
-                {{ prod.variants?.length || 0 }} tamaños/variantes
-              </span>
-            </td>
-            <td class="p-3.5">
-              <span class="bg-slate-100 text-slate-700 px-2.5 py-1 rounded-lg text-[11px] font-bold">
-                {{ prod.category?.name }}
-              </span>
-            </td>
-            <td class="p-3.5 text-right text-slate-500">${{ formatMoney(prod.cost_price) }}</td>
-            <td class="p-3.5 text-right font-black text-slate-800">${{ formatMoney(prod.sale_price) }}</td>
-            <td class="p-3.5 text-right">
-              <span class="font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded">
-                ${{ formatMoney(prod.sale_price - prod.cost_price) }}
-              </span>
-            </td>
-            <td class="p-3.5 text-center">
-              <span
-                class="px-2.5 py-1 rounded-full text-xs font-black inline-block"
-                :class="Number(prod.stock_quantity) <= Number(prod.min_stock_alert)
-                  ? 'bg-rose-100 text-rose-700 animate-pulse'
-                  : 'bg-emerald-100 text-emerald-800'"
-              >
-                {{ Number(prod.stock_quantity) }}
-              </span>
-              <span v-if="Number(prod.stock_quantity) <= Number(prod.min_stock_alert)" class="block text-[10px] text-rose-500 font-bold mt-0.5">
-                ¡Alerta Stock!
-              </span>
-            </td>
-            <td class="p-3.5 text-right space-x-1">
-              <button
-                @click="openStockAdjust(prod)"
-                class="p-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-[11px] font-bold"
-                title="Ajustar Stock"
-              >
-                ⚖️ Ajustar
-              </button>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-
-    <!-- Stock Adjust Modal -->
-    <div v-if="adjustingProduct" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50">
-      <div class="bg-white rounded-2xl max-w-sm w-full p-5 shadow-2xl space-y-3">
-        <h3 class="font-bold text-sm text-slate-800">Ajuste Manual de Inventario</h3>
-        <p class="text-xs text-slate-500">{{ adjustingProduct.name }}</p>
-
-        <div>
-          <label class="block text-[11px] font-semibold text-slate-600 mb-1">Nueva Cantidad de Stock</label>
-          <input
-            v-model.number="newStockVal"
-            type="number"
-            class="w-full text-sm font-bold px-3 py-2 border border-slate-300 rounded-xl"
-          />
+            <div class="flex-1 min-w-[220px]">
+                <AppInput v-model="search" placeholder="Buscar por nombre o descripción" :icon="Search" />
+            </div>
+            <div class="min-w-[180px]">
+                <AppSelect v-model="categoryId">
+                    <option :value="null">Todas las categorías</option>
+                    <option v-for="cat in productStore.categories" :key="cat.id" :value="cat.id">
+                        {{ cat.name }}
+                    </option>
+                </AppSelect>
+            </div>
+            <div class="min-w-[150px]">
+                <AppSelect v-model="statusFilter">
+                    <option value="all">Todos los estados</option>
+                    <option value="active">Activos</option>
+                    <option value="inactive">Inactivos</option>
+                </AppSelect>
+            </div>
+            <span class="text-xs text-slate-500">{{ filtered.length }} productos</span>
         </div>
 
-        <div class="flex justify-end space-x-2 pt-2">
-          <button @click="adjustingProduct = null" class="px-3 py-1.5 bg-slate-100 text-slate-700 rounded-xl text-xs font-semibold">
-            Cancelar
-          </button>
-          <button @click="saveStockAdjust" class="px-4 py-1.5 bg-pink-600 hover:bg-pink-700 text-white rounded-xl text-xs font-bold">
-            Guardar
-          </button>
+        <div class="space-y-4">
+            <AppTable
+                :loading="productStore.loading"
+                :total="filtered.length"
+                empty-title="Sin productos"
+                empty-description="Ajusta la búsqueda o crea el primer producto del catálogo."
+            >
+                <template #head>
+                    <th class="p-3.5">Producto</th>
+                    <th class="p-3.5">Categoría</th>
+                    <th class="p-3.5 text-right">Precio</th>
+                    <th class="p-3.5 text-center">Estado</th>
+                    <th class="p-3.5 text-right">Acciones</th>
+                </template>
+
+                <tr
+                    v-for="product in paged"
+                    :key="product.id"
+                    class="hover:bg-slate-50 transition-colors"
+                >
+                    <td class="p-3.5">
+                        <div class="flex items-center gap-3">
+                            <div
+                                class="h-10 w-10 rounded-lg overflow-hidden bg-slate-100 border border-slate-200 flex items-center justify-center shrink-0"
+                            >
+                                <img
+                                    v-if="product.image"
+                                    :src="imageUrl(product.image)"
+                                    :alt="product.name"
+                                    class="h-full w-full object-cover"
+                                />
+                                <AppIcon
+                                    v-else
+                                    :name="categoryIcon(product)"
+                                    :size="20"
+                                    class="text-slate-400"
+                                />
+                            </div>
+                            <div class="min-w-0">
+                                <p class="text-sm font-semibold text-slate-800 truncate">
+                                    {{ product.name }}
+                                </p>
+                                <p
+                                    v-if="product.description"
+                                    class="text-xs text-slate-400 truncate"
+                                >
+                                    {{ product.description }}
+                                </p>
+                                <AppBadge
+                                    v-if="product.variants?.length"
+                                    class="mt-1"
+                                    :label="`${product.variants.length} variantes`"
+                                />
+                            </div>
+                        </div>
+                    </td>
+                    <td class="p-3.5">
+                        <AppBadge :label="product.category?.name || 'Sin categoría'" />
+                    </td>
+                    <td class="p-3.5 text-right font-semibold text-slate-800">
+                        $ {{ formatMoney(product.sale_price) }}
+                    </td>
+                    <td class="p-3.5 text-center">
+                        <AppBadge
+                            :tone="product.is_active ? 'success' : 'warning'"
+                            dot
+                            :label="product.is_active ? 'Activo' : 'Inactivo'"
+                        />
+                    </td>
+                    <td class="p-3.5">
+                        <div class="flex items-center justify-end gap-1">
+                            <button
+                                type="button"
+                                class="p-2 rounded-lg text-slate-500 hover:bg-indigo-50 hover:text-indigo-600 transition"
+                                title="Editar"
+                                :aria-label="`Editar ${product.name}`"
+                                @click="openEdit(product)"
+                            >
+                                <AppIcon :name="Pencil" :size="16" />
+                            </button>
+                            <button
+                                type="button"
+                                class="p-2 rounded-lg text-slate-500 hover:bg-rose-50 hover:text-rose-600 transition"
+                                title="Eliminar"
+                                :aria-label="`Eliminar ${product.name}`"
+                                @click="askDelete(product)"
+                            >
+                                <AppIcon :name="Trash2" :size="16" />
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+            </AppTable>
+
+            <div
+                v-if="filtered.length > 0"
+                class="bg-white rounded-2xl border border-slate-200 shadow-sm"
+            >
+                <AppPagination v-model:page="page" :total="filtered.length" :per-page="perPage" />
+            </div>
         </div>
-      </div>
+
+        <ProductFormModal :open="formOpen" :product="editing" @close="formOpen = false" />
+
+        <ConfirmDialog
+            :open="deleteOpen"
+            danger
+            title="Eliminar producto"
+            :message="`¿Eliminar '${productToDelete?.name}'? El producto dejará de aparecer en el catálogo, pero su historial de ventas se conserva.`"
+            confirm-text="Eliminar"
+            :loading="deleting"
+            @confirm="confirmDelete"
+            @cancel="deleteOpen = false"
+        />
     </div>
-  </div>
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue';
-import api from '../api';
+import { computed, onMounted, ref, watch } from 'vue';
+import { Pencil, Plus, Search, Trash2 } from 'lucide-vue-next';
+import PageHeader from '../components/ui/PageHeader.vue';
+import AppButton from '../components/ui/AppButton.vue';
+import AppInput from '../components/ui/AppInput.vue';
+import AppSelect from '../components/ui/AppSelect.vue';
+import AppBadge from '../components/ui/AppBadge.vue';
+import AppTable from '../components/ui/AppTable.vue';
+import AppIcon from '../components/ui/AppIcon.vue';
+import AppPagination from '../components/ui/AppPagination.vue';
+import ConfirmDialog from '../components/ui/ConfirmDialog.vue';
+import ProductFormModal from '../components/ProductFormModal.vue';
+import { useProductStore } from '../stores/products';
+import { useToastStore } from '../stores/toast';
+import { resolveCategoryIcon } from '../config/categoryIcons';
 
-const products = ref([]);
-const categories = ref([]);
-const searchQuery = ref('');
-const selectedCategory = ref(null);
-const onlyLowStock = ref(false);
+const productStore = useProductStore();
+const toastStore = useToastStore();
 
-const adjustingProduct = ref(null);
-const newStockVal = ref(0);
+const perPage = 10;
+const search = ref('');
+const categoryId = ref(null);
+const statusFilter = ref('all');
+const page = ref(1);
+const formOpen = ref(false);
+const editing = ref(null);
+const deleteOpen = ref(false);
+const productToDelete = ref(null);
+const deleting = ref(false);
 
-const formatMoney = (val) => Number(val || 0).toLocaleString('es-CO');
+const formatMoney = (value) => Number(value || 0).toLocaleString('es-CO');
+const imageUrl = (path) => `/storage/${path}`;
+const categoryIcon = (product) => resolveCategoryIcon(product.category?.icon);
 
-const loadData = async () => {
-  const [pRes, cRes] = await Promise.all([
-    api.get('/products'),
-    api.get('/categories')
-  ]);
-  products.value = pRes.data.data;
-  categories.value = cRes.data.data;
+const load = async () => {
+    try {
+        await Promise.all([productStore.fetchProducts(), productStore.fetchCategories()]);
+    } catch (err) {
+        toastStore.error(productStore.error || 'No se pudo cargar el catálogo');
+    }
 };
 
-onMounted(() => {
-  loadData();
+onMounted(load);
+
+watch([search, categoryId], () => {
+    page.value = 1;
+
+    productStore
+        .fetchProducts({
+            search: search.value || undefined,
+            categoryId: categoryId.value || undefined,
+        })
+        .catch(() => {});
 });
 
-const filteredProducts = computed(() => {
-  return products.value.filter(p => {
-    const matchesSearch = !searchQuery.value || p.name.toLowerCase().includes(searchQuery.value.toLowerCase());
-    const matchesCat = !selectedCategory.value || p.category_id === selectedCategory.value;
-    const matchesLowStock = !onlyLowStock.value || Number(p.stock_quantity) <= Number(p.min_stock_alert);
-    return matchesSearch && matchesCat && matchesLowStock;
-  });
+watch(statusFilter, () => {
+    page.value = 1;
 });
 
-const openStockAdjust = (prod) => {
-  adjustingProduct.value = prod;
-  newStockVal.value = Number(prod.stock_quantity);
+const filtered = computed(() => {
+    if (statusFilter.value === 'all') {
+        return productStore.items;
+    }
+
+    const wantActive = statusFilter.value === 'active';
+    return productStore.items.filter((product) => product.is_active === wantActive);
+});
+
+const paged = computed(() => {
+    const start = (page.value - 1) * perPage;
+    return filtered.value.slice(start, start + perPage);
+});
+
+const openCreate = () => {
+    editing.value = null;
+    formOpen.value = true;
 };
 
-const saveStockAdjust = async () => {
-  try {
-    await api.post(`/products/${adjustingProduct.value.id}/adjust-stock`, {
-      new_quantity: newStockVal.value,
-      reason: 'Ajuste manual de control',
-    });
-    adjustingProduct.value = null;
-    loadData();
-  } catch (err) {
-    alert('Error al ajustar stock: ' + err.message);
-  }
+const openEdit = (product) => {
+    editing.value = product;
+    formOpen.value = true;
+};
+
+const askDelete = (product) => {
+    productToDelete.value = product;
+    deleteOpen.value = true;
+};
+
+const confirmDelete = async () => {
+    deleting.value = true;
+
+    try {
+        await productStore.deleteProduct(productToDelete.value.id);
+        toastStore.success('Producto eliminado');
+        deleteOpen.value = false;
+    } catch (err) {
+        toastStore.error(err.response?.data?.message || 'No se pudo eliminar el producto');
+    } finally {
+        deleting.value = false;
+    }
 };
 </script>

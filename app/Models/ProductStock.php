@@ -31,7 +31,9 @@ class ProductStock extends Model
 
     public function variant()
     {
-        return $this->belongsTo(ProductVariant::class);
+        // La clave foránea se declara a mano: belongsTo la deduce del nombre de
+        // la relación (variant_id), que no es la columna real.
+        return $this->belongsTo(ProductVariant::class, 'product_variant_id');
     }
 
     public function movements()

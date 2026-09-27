@@ -6,6 +6,7 @@ use App\Models\Category;
 use App\Models\Product;
 use App\Models\ProductStock;
 use App\Models\ProductVariant;
+use App\Models\StockMovement;
 use App\Services\InventoryService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -112,5 +113,39 @@ class InventoryServiceTest extends TestCase
         $this->service->adjustStock($product, null, 50, 'Carga inicial');
 
         $this->assertCount(0, $this->service->getLowStockProducts());
+    }
+
+    public function test_variant_relation_resolves_its_foreign_key(): void
+    {
+        $product = $this->makeProduct();
+        $variant = ProductVariant::create([
+            'product_id' => $product->id,
+            'name' => 'Grande',
+            'cost_price' => 3400,
+            'sale_price' => 11000,
+        ]);
+
+        $this->service->adjustStock($product, $variant, 30, 'Carga inicial');
+        $stock = $variant->stock()->first();
+
+        $this->assertNotNull($stock);
+        $this->assertEquals($variant->id, $stock->product_variant_id);
+        // belongsTo deduce la clave del nombre de la relación. Si se llama
+        // variant() sin declarar la clave, busca variant_id y devuelve null,
+        // lo que en la UI muestra todas las variantes como "Producto base".
+        $this->assertNotNull($stock->variant);
+        $this->assertEquals('Grande', $stock->variant->name);
+        $this->assertNotNull($stock->product);
+    }
+
+    public function test_movement_resolves_back_to_its_stock_row(): void
+    {
+        $product = $this->makeProduct();
+        $this->service->adjustStock($product, null, 20, 'Carga inicial');
+
+        $movement = StockMovement::latest('id')->first();
+
+        $this->assertNotNull($movement->stock);
+        $this->assertEquals('20.00', $movement->stock->quantity);
     }
 }
