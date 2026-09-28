@@ -2,16 +2,23 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Seeder;
 use App\Models\User;
-use Spatie\Permission\Models\Role;
-use Spatie\Permission\Models\Permission;
+use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
+use Spatie\Permission\Models\Permission;
+use Spatie\Permission\Models\Role;
 
 class RolesAndUsersSeeder extends Seeder
 {
     /** PIN del mesero de prueba. Solo aplica la primera vez que se siembra. */
     private const DEFAULT_WAITER_PIN = '1234';
+
+    /**
+     * PIN de los demas usuarios de prueba en el portal de empleados.
+     * Es el mismo para todos para que se pueda probar el flujo sin tener que
+     * acordarse de cuatro numeros distintos.
+     */
+    private const DEFAULT_EMPLOYEE_PIN = '1234';
 
     public function run(): void
     {
@@ -91,14 +98,55 @@ class RolesAndUsersSeeder extends Seeder
         // El PIN se guarda con hash. El admin puede resetearlo desde el modulo
         // de turnos si el mesero lo olvida. firstOrCreate no lo sobreescribe en
         // una reejecucion, asi que solo se asigna si falta.
-        if (blank($waiter->pin)) {
-            $waiter->forceFill(['pin' => Hash::make(self::DEFAULT_WAITER_PIN)])->save();
-        }
+        //
+        // Los cuatro usuarios de desarrollo tambien entran al portal de
+        // empleados, que es para cualquier persona con PIN sin importar el rol.
+        // Todos comparten el PIN de prueba salvo el mesero, que ya tenia el
+        // suyo desde antes.
+        $this->ensurePin($admin);
+        $this->ensurePin($cashier);
+        $this->ensurePin($waiter, self::DEFAULT_WAITER_PIN);
 
         $kitchen = User::firstOrCreate(
             ['email' => 'cocina@heladeria.com'],
             ['name' => 'Barra y Cocina', 'password' => Hash::make('password')]
         );
         $kitchen->syncRoles([$kitchenRole]);
+        $this->ensurePin($kitchen);
+
+        // Fechas de la ficha de los usuarios de desarrollo. hired_at es la base
+        // del saldo de vacaciones: sin ella el saldo es cero y el admin ve el
+        // aviso de que falta cargarla.
+        $this->ensureProfile($admin, '2023-01-16', '1988-06-14', '05-24');
+        $this->ensureProfile($cashier, '2024-03-04', '1995-11-02', '08-11');
+        $this->ensureProfile($waiter, '2025-11-10', '2001-02-20', '09-06');
+        $this->ensureProfile($kitchen, '2024-07-01', '1990-09-30', '12-18');
+    }
+
+    /**
+     * Asigna el PIN de prueba si el usuario aun no tiene uno. No sobreescribe
+     * un PIN real: en una reejecucion del seeder se respetaria el que ya esta.
+     */
+    private function ensurePin(User $user, string $pin = self::DEFAULT_EMPLOYEE_PIN): void
+    {
+        if (blank($user->pin)) {
+            $user->forceFill(['pin' => Hash::make($pin)])->save();
+        }
+    }
+
+    /** Carga la ficha solo si falta, por la misma razon que el PIN. */
+    private function ensureProfile(
+        User $user,
+        string $hiredAt,
+        string $birthDate,
+        string $familyDay
+    ): void {
+        if (! $user->hired_at) {
+            $user->forceFill([
+                'hired_at' => $hiredAt,
+                'birth_date' => $birthDate,
+                'family_day' => date('Y').'-'.$familyDay,
+            ])->save();
+        }
     }
 }

@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router';
 import { useAuthStore } from '../stores/auth';
 import { useShiftStore } from '../stores/shifts';
+import { homeRouteFor } from '../config/navigation';
 
 const routes = [
     {
@@ -10,12 +11,27 @@ const routes = [
         meta: { guestOnly: true },
     },
     {
+        // Portal del empleado: elige su nombre e ingresa su PIN. No requiere
+        // sesion de Sanctum a proposito, por eso no lleva requiresAuth. La
+        // sesion del portal es aparte y vive en su propio store.
+        path: '/empleados',
+        name: 'employee-portal',
+        component: () => import('../views/EmployeePortalView.vue'),
+    },
+    {
+        // Vista de equipo del administrador. Esta si va dentro del sistema.
+        path: '/empleados/equipo',
+        name: 'team',
+        component: () => import('../views/TeamEmployeesView.vue'),
+        meta: { requiresAuth: true, roles: ['admin'] },
+    },
+    {
         path: '/',
         name: 'pos',
         component: () => import('../views/PosView.vue'),
         // El mesero necesita turno abierto para trabajar: sin el, la comanda
-        // quedaria sin atribucion.
-        meta: { requiresAuth: true, requiresShift: true },
+        // quedaria sin atribucion. El admin no entra al POS: administra.
+        meta: { requiresAuth: true, requiresShift: true, roles: ['cashier', 'waiter', 'kitchen'] },
     },
     {
         path: '/cobro/:orderId',
@@ -36,10 +52,19 @@ const routes = [
         meta: { requiresAuth: true, roles: ['admin'] },
     },
     {
+        // Operacion de gaveta: abrir, movimientos y arqueo. Solo el cajero.
         path: '/caja',
         name: 'cash-register',
         component: () => import('../views/CashRegisterView.vue'),
-        meta: { requiresAuth: true, roles: ['admin', 'cashier'] },
+        meta: { requiresAuth: true, roles: ['cashier'] },
+    },
+    {
+        // Caja de supervision: el admin mira el saldo de la gaveta y registra
+        // retiros. No abre ni cierra turnos, eso es del cajero.
+        path: '/caja/resumen',
+        name: 'cash-overview',
+        component: () => import('../views/CashOverviewView.vue'),
+        meta: { requiresAuth: true, roles: ['admin'] },
     },
     {
         path: '/reportes',
@@ -60,6 +85,8 @@ const routes = [
         meta: { requiresAuth: true, roles: ['admin', 'waiter'] },
     },
     {
+        // Cualquier ruta desconocida devuelve la SPA. En el dev server eso
+        // significa un 200 con el index.html, igual que en produccion.
         path: '/:pathMatch(.*)*',
         redirect: '/',
     }
@@ -86,13 +113,13 @@ router.beforeEach(async (to, from, next) => {
     }
 
     if (to.meta.guestOnly && authStore.isAuthenticated) {
-        return next({ name: 'pos' });
+        return next(homeRouteFor(authStore.roles));
     }
 
     if (to.meta.roles && to.meta.roles.length > 0) {
         const hasRole = to.meta.roles.some(role => authStore.roles.includes(role));
         if (!hasRole) {
-            return next({ name: 'pos' });
+            return next(homeRouteFor(authStore.roles));
         }
     }
 

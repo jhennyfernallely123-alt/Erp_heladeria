@@ -9,6 +9,9 @@ class Invoice extends Model
 {
     use HasFactory;
 
+    /** Ver CashRegister::$dateFormat: el saldo de gaveta ordena por microsegundos. */
+    protected $dateFormat = 'Y-m-d H:i:s.u';
+
     protected $fillable = [
         'order_id',
         'invoice_number',

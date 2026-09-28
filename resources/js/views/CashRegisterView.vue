@@ -17,14 +17,22 @@
             </div>
             <h3 class="text-lg font-bold text-petrol-800">No hay turno de caja abierto</h3>
             <p class="text-xs text-niebla-400">
-                Inicia un turno de caja ingresando el saldo base en efectivo (gaveta) para comenzar a
-                facturar.
+                Contá el efectivo que hay en la gaveta e iniciá el turno. Ese monto es la base sobre
+                la que se calcula el arqueo.
+            </p>
+
+            <p
+                v-if="drawerBalance > 0"
+                class="text-xs text-petrol-700 bg-aguamarina-50 rounded-xl px-3 py-2 text-left"
+            >
+                El último conteo dejó <span class="font-bold">${{ formatMoney(drawerBalance) }}</span>
+                en la gaveta. Confirmalo o corregilo abajo según lo que contaste.
             </p>
 
             <div class="pt-2 text-left space-y-3">
                 <AppInput
                     v-model.number="openingAmount"
-                    label="Monto base de apertura ($)"
+                    label="Efectivo contado en la gaveta ($)"
                     type="number"
                     placeholder="ej. 50000"
                 />
@@ -64,6 +72,15 @@
                 </div>
 
                 <div class="flex items-center gap-3 flex-wrap">
+                    <div class="bg-petrol-700 px-4 py-3 rounded-xl border border-petrol-600">
+                        <span class="text-[10px] uppercase font-bold text-niebla-400 block">
+                            Saldo en gaveta
+                        </span>
+                        <span class="text-lg font-bold text-aguamarina-300">
+                            ${{ formatMoney(drawerBalance) }}
+                        </span>
+                    </div>
+
                     <div class="bg-petrol-700 px-4 py-3 rounded-xl border border-petrol-600">
                         <span class="text-[10px] uppercase font-bold text-niebla-400 block">
                             Base de apertura
@@ -200,7 +217,7 @@
 </template>
 
 <script setup>
-import { onMounted, ref } from 'vue';
+import { computed, onMounted, ref } from 'vue';
 import { ArrowLeftRight, Lock, LockOpen, Receipt } from 'lucide-vue-next';
 import PageHeader from '../components/ui/PageHeader.vue';
 import AppButton from '../components/ui/AppButton.vue';
@@ -226,7 +243,19 @@ const newMovement = ref({
 const isCloseModalOpen = ref(false);
 const actualCloseAmount = ref(0);
 
+/** Saldo real de la gaveta: base + efectivo cobrado + entradas - salidas - retiros. */
+const drawerBalance = ref(0);
+
 const formatMoney = (val) => Number(val || 0).toLocaleString('es-CO');
+
+const loadBalance = async () => {
+    try {
+        const res = await api.get('/cash-register/balance');
+        drawerBalance.value = res.data.data.balance;
+    } catch (err) {
+        console.error(err);
+    }
+};
 
 const loadCurrent = async () => {
     try {
@@ -234,10 +263,18 @@ const loadCurrent = async () => {
         currentSession.value = res.data.data;
     } catch (err) {
         console.error(err);
+    } finally {
+        await loadBalance();
     }
 };
 
-onMounted(loadCurrent);
+onMounted(async () => {
+    await loadCurrent();
+    // El conteo previo se propone como base: el cajero confirma o corrige.
+    if (!currentSession.value && drawerBalance.value > 0) {
+        openingAmount.value = drawerBalance.value;
+    }
+});
 
 const openRegister = async () => {
     try {
@@ -246,6 +283,7 @@ const openRegister = async () => {
             notes: openingNotes.value,
         });
         currentSession.value = res.data.data;
+        await loadBalance();
     } catch (err) {
         alert(err.response?.data?.message || 'Error al abrir caja');
     }

@@ -44,6 +44,23 @@ return [
             'throw' => false,
         ],
 
+        /*
+         * Documentos que no se sirven por URL: cedulas, incapacidades y
+         * certificados medicos de los empleados.
+         *
+         * 'local' NO sirve para esto, aunque storage/app este fuera de public/:
+         * el catch-all de routes/web.php devuelve la SPA para cualquier ruta que
+         * no exista en public/, asi que un archivo ahi es alcanzable por URL
+         * directa. Este disco cae en storage/app/private, que no tiene
+         * contraparte en public/, y se lee solo por el endpoint autenticado.
+         */
+        'private' => [
+            'driver' => 'local',
+            'root' => storage_path('app/private'),
+            'visibility' => 'private',
+            'throw' => false,
+        ],
+
         's3' => [
             'driver' => 's3',
             'key' => env('AWS_ACCESS_KEY_ID'),

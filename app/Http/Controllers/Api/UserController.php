@@ -3,9 +3,10 @@
 namespace App\Http\Controllers\Api;
 
 use App\Models\User;
+use App\Services\EmployeeService;
+use App\Services\PinAuthService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
@@ -13,9 +14,14 @@ use Illuminate\Support\Str;
 /**
  * Gestion de meseros. Todo es exclusivo del administrador: el cajero y la
  * cocina no entran, y el mesero tampoco.
+ *
+ * La ficha completa de cada empleado (contratación, cumpleaños, día de familia)
+ * vive en TeamController, que es el módulo del portal de empleados.
  */
 class UserController extends BaseApiController
 {
+    public function __construct(protected PinAuthService $pinAuth) {}
+
     /** Listado de usuarios con su rol y si ya tienen PIN. */
     public function index(): JsonResponse
     {
@@ -57,7 +63,13 @@ class UserController extends BaseApiController
         return $this->successResponse($this->present($user->fresh('roles')), 'Mesero creado', 201);
     }
 
-    /** Reseteo del PIN. Es el escape cuando un mesero se lo olvida. */
+    /**
+     * Reseteo del PIN. Es el escape cuando alguien se lo olvida.
+     *
+     * Libera el bloqueo en los dos lugares donde se usa un PIN: el modulo de
+     * turnos y el portal de empleados. No tiene sentido dejar a alguien
+     * esperando despues de arreglar su PIN.
+     */
     public function resetPin(Request $request, User $user): JsonResponse
     {
         $validated = $request->validate([
@@ -66,9 +78,8 @@ class UserController extends BaseApiController
 
         $user->forceFill(['pin' => Hash::make($validated['pin'])])->save();
 
-        // Si estaba bloqueado por intentos fallidos, el reseteo lo libera: no
-        // tiene sentido dejar a alguien esperando despues de arreglar su PIN.
-        Cache::forget("work_shift:pin_attempts:{$user->id}");
+        $this->pinAuth->clearFailedAttempts($user->id, EmployeeService::PIN_SCOPE);
+        $this->pinAuth->clearFailedAttempts($user->id, 'work_shift');
 
         return $this->successResponse($this->present($user), 'PIN actualizado');
     }

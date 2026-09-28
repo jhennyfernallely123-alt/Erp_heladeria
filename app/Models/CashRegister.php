@@ -9,6 +9,13 @@ class CashRegister extends Model
 {
     use HasFactory;
 
+    /**
+     * El saldo de la gaveta se deriva sumando lo que ocurrio despues de la
+     * apertura o del ultimo arqueo. Con segundos, un evento posterior caia en el
+     * mismo segundo que el ancla y se perdia. Microsegundos lo evitan.
+     */
+    protected $dateFormat = 'Y-m-d H:i:s.u';
+
     protected $fillable = [
         'user_id',
         'opened_at',

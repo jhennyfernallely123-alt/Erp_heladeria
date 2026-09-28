@@ -3,11 +3,11 @@
         <!-- Navegacion superior -->
         <div class="flex items-center justify-between">
             <router-link
-                to="/"
+                :to="homeRoute"
                 class="text-xs font-bold text-niebla-400 hover:text-petrol-700 flex items-center gap-1"
             >
                 <AppIcon :name="ArrowLeft" :size="14" />
-                Volver al salón
+                {{ homeLabel }}
             </router-link>
             <AppBadge tone="info" label="Punto de Cobro" />
         </div>
@@ -333,10 +333,20 @@ import AppInput from '../components/ui/AppInput.vue';
 import AppModal from '../components/ui/AppModal.vue';
 import AppSelect from '../components/ui/AppSelect.vue';
 import InvoicePreviewModal from '../components/invoice/InvoicePreviewModal.vue';
+import { useAuthStore } from '../stores/auth';
+import { homeRouteFor, visibleNavItems } from '../config/navigation';
 import api from '../api';
 
 const route = useRoute();
 const router = useRouter();
+const authStore = useAuthStore();
+
+// El admin no tiene POS: su vuelta es al modulo de turnos.
+const homeRoute = computed(() => homeRouteFor(authStore.roles));
+const homeLabel = computed(() => {
+    const first = visibleNavItems(authStore.roles)[0];
+    return first ? `Volver a ${first.label}` : 'Volver';
+});
 
 const orderId = route.params.orderId;
 const order = ref(null);
@@ -366,7 +376,7 @@ const loadOrder = async () => {
         payments.value[0].amount = Number(order.value.total);
     } catch (err) {
         alert('Error al cargar pedido: ' + err.message);
-        router.push('/');
+        router.push(homeRoute.value);
     } finally {
         loading.value = false;
     }
@@ -435,6 +445,6 @@ const submitCheckout = async () => {
 const finishCheckout = () => {
     previewOpen.value = false;
     issuedInvoice.value = null;
-    router.push('/');
+    router.push(homeRoute.value);
 };
 </script>

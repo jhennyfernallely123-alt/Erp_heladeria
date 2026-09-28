@@ -4,9 +4,8 @@ namespace App\Services;
 
 use App\Models\User;
 use App\Models\WorkShift;
-use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Hash;
 use RuntimeException;
 
 /**
@@ -18,22 +17,15 @@ use RuntimeException;
  */
 class WorkShiftService
 {
-    /** Intentos fallidos antes de bloquear el PIN de una persona. */
-    private const MAX_PIN_ATTEMPTS = 5;
+    /** Alcance del contador de intentos, para no compartirlo con el portal. */
+    private const PIN_SCOPE = 'work_shift';
 
-    /** Minutos de bloqueo tras agotar los intentos. */
-    private const PIN_LOCK_MINUTES = 5;
-
-    /** Clave de cache con el contador de intentos fallidos de un usuario. */
-    private function pinLockKey(int $userId): string
-    {
-        return "work_shift:pin_attempts:{$userId}";
-    }
+    public function __construct(protected PinAuthService $pinAuth) {}
 
     /**
      * Meseros que pueden marcar turno: tienen el permiso y un PIN configurado.
      */
-    public function workers(): \Illuminate\Support\Collection
+    public function workers(): Collection
     {
         return User::role('waiter')
             ->whereNotNull('pin')
@@ -54,20 +46,18 @@ class WorkShiftService
         if (! $worker) {
             // Mismo mensaje que un PIN incorrecto, para no filtrar que usuarios
             // existen.
-            throw new RuntimeException($this->invalidPinMessage());
+            throw new RuntimeException($this->pinAuth->invalidMessage());
         }
 
-        if ($this->isPinLocked($worker->id)) {
-            throw new RuntimeException('Demasiados intentos. Espera unos minutos antes de volver a intentar.');
+        // Solo los meseros marcan turno. Un PIN de otro rol no debe revelar mas
+        // que un PIN equivocado, pero igual cuenta como intento.
+        if (! $worker->hasRole('waiter')) {
+            $this->pinAuth->registerFailedAttempt($worker->id, self::PIN_SCOPE);
+
+            throw new RuntimeException($this->pinAuth->invalidMessage());
         }
 
-        if (! $worker->hasRole('waiter') || blank($worker->pin) || ! Hash::check($pin, $worker->pin)) {
-            $this->registerFailedAttempt($worker->id);
-
-            throw new RuntimeException($this->invalidPinMessage());
-        }
-
-        $this->clearFailedAttempts($worker->id);
+        $this->pinAuth->verify($worker, $pin, self::PIN_SCOPE);
 
         // Una persona no puede tener dos turnos abiertos, en ningun dispositivo.
         $alreadyOpen = WorkShift::where('user_id', $worker->id)
@@ -75,7 +65,7 @@ class WorkShiftService
             ->first();
 
         if ($alreadyOpen) {
-            throw new RuntimeException("{$worker->name} ya tiene un turno abierto desde las " . $alreadyOpen->opened_at->format('H:i') . '.');
+            throw new RuntimeException("{$worker->name} ya tiene un turno abierto desde las ".$alreadyOpen->opened_at->format('H:i').'.');
         }
 
         return WorkShift::create([
@@ -182,28 +172,8 @@ class WorkShiftService
         })->values()->all();
     }
 
-    private function isPinLocked(int $userId): bool
-    {
-        return (int) Cache::get($this->pinLockKey($userId), 0) >= self::MAX_PIN_ATTEMPTS;
-    }
-
-    private function registerFailedAttempt(int $userId): void
-    {
-        $key = $this->pinLockKey($userId);
-        $attempts = (int) Cache::get($key, 0) + 1;
-
-        // El contador se olvida solo: el bloqueo es temporal y no necesita
-        // Guardarse en la base de datos.
-        Cache::put($key, $attempts, now()->addMinutes(self::PIN_LOCK_MINUTES));
-    }
-
-    private function clearFailedAttempts(int $userId): void
-    {
-        Cache::forget($this->pinLockKey($userId));
-    }
-
     private function invalidPinMessage(): string
     {
-        return 'PIN incorrecto.';
+        return $this->pinAuth->invalidMessage();
     }
 }

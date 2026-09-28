@@ -10,7 +10,7 @@ use Spatie\Permission\Traits\HasRoles;
 
 class User extends Authenticatable
 {
-    use HasApiTokens, HasFactory, Notifiable, HasRoles;
+    use HasApiTokens, HasFactory, HasRoles, Notifiable;
 
     protected $fillable = [
         'name',
@@ -32,6 +32,11 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            // Sin estos casts las fechas salen como string y el calculo de
+            // vacaciones revienta al pedir un Carbon.
+            'hired_at' => 'date',
+            'birth_date' => 'date',
+            'family_day' => 'date',
         ];
     }
 

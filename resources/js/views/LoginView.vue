@@ -159,13 +159,20 @@
                         </button>
                     </div>
 
-                    <p v-if="error" class="message show">{{ error }}</p>
+                <p v-if="error" class="message show">{{ error }}</p>
 
-                    <button type="submit" class="login-button" :disabled="loading">
-                        <AppIcon :name="ArrowRight" :size="19" />
-                        {{ loading ? 'Ingresando...' : 'Ingresar' }}
-                    </button>
-                </form>
+                <button type="submit" class="login-button" :disabled="loading">
+                    <AppIcon :name="ArrowRight" :size="19" />
+                    {{ loading ? 'Ingresando...' : 'Ingresar' }}
+                </button>
+
+                <!-- El portal del empleado es otra puerta: entra con nombre y
+                     PIN, no con usuario y contrasena. -->
+                <router-link to="/empleados" class="employee-portal-link">
+                    <AppIcon :name="Users" :size="16" />
+                    Soy empleado y quiero ver mi ficha
+                </router-link>
+            </form>
 
                 <footer class="card-footer">
                     <div class="footer-brand">
@@ -194,6 +201,7 @@ import {
     Smile,
     User,
     UserRound,
+    Users,
     Wallet,
 } from 'lucide-vue-next';
 import AppIcon from '../components/ui/AppIcon.vue';
@@ -681,6 +689,28 @@ const submitLogin = async () => {
 .login-button:disabled {
     opacity: 0.6;
     cursor: not-allowed;
+}
+
+/* Puerta secundaria al portal del empleado. */
+.employee-portal-link {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 14px;
+    padding: 10px;
+    border: 1px dashed #b9dcd9;
+    border-radius: 10px;
+    color: #3f9f9c;
+    font-size: 12.5px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.2s ease;
+}
+
+.employee-portal-link:hover {
+    background: #f0faf9;
+    border-color: #4caaa7;
 }
 
 /* ============ PIE ============ */

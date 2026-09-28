@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Middleware\EmployeePortalAuthenticate;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
@@ -19,6 +20,10 @@ return Application::configure(basePath: dirname(__DIR__))
             'role' => RoleMiddleware::class,
             'permission' => PermissionMiddleware::class,
             'role_or_permission' => RoleOrPermissionMiddleware::class,
+            // Sesion propia del portal de empleados. Deliberadamente NO es
+            // auth:sanctum: un PIN de 4 digitos no puede dar acceso al resto
+            // de la API.
+            'portal' => EmployeePortalAuthenticate::class,
         ]);
 
         // Esta aplicacion es solo API y no tiene ruta 'login'. Si el middleware

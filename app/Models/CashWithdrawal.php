@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class CashMovement extends Model
+class CashWithdrawal extends Model
 {
     use HasFactory;
 
@@ -13,22 +13,19 @@ class CashMovement extends Model
     protected $dateFormat = 'Y-m-d H:i:s.u';
 
     protected $fillable = [
-        'cash_register_id',
         'user_id',
-        'type',
-        'category',
         'amount',
-        'description',
+        'category',
+        'reason',
+        'receipt_number',
+        'notes',
+        'withdrawn_at',
     ];
 
     protected $casts = [
         'amount' => 'decimal:2',
+        'withdrawn_at' => 'datetime',
     ];
-
-    public function cashRegister()
-    {
-        return $this->belongsTo(CashRegister::class);
-    }
 
     public function user()
     {
