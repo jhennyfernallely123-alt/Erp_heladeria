@@ -31,7 +31,7 @@
                     >
                         <div>
                             <h2 class="text-lg font-bold text-petrol-800">
-                                {{ order.table ? order.table.name : 'Venta para Llevar' }}
+                                {{ order.table ? order.table.name : (order.type === 'delivery' ? 'Domicilio' : 'Venta para Llevar') }}
                             </h2>
                             <p class="text-xs text-aguamarina-700 font-semibold">
                                 Orden #{{ order.order_number }}
@@ -40,8 +40,28 @@
                         <span
                             class="h-11 w-11 rounded-xl bg-aguamarina-50 flex items-center justify-center shrink-0"
                         >
-                            <AppIcon :name="Receipt" :size="22" class="text-aguamarina-600" />
+                            <AppIcon :name="order.type === 'delivery' ? Bike : Receipt" :size="22" class="text-aguamarina-600" />
                         </span>
+                    </div>
+
+                    <!-- Datos de entrega: confirmar antes de cobrar -->
+                    <div
+                        v-if="order.type === 'delivery'"
+                        class="mt-4 bg-aguamarina-50 border border-aguamarina-200 rounded-xl p-3 space-y-1.5"
+                    >
+                        <div class="flex items-start gap-1.5 text-xs text-petrol-700">
+                            <AppIcon :name="MapPin" :size="14" class="text-aguamarina-600 mt-0.5 shrink-0" />
+                            <span class="font-semibold">{{ order.delivery_name }}</span>
+                            <span class="text-niebla-400">·</span>
+                            <span>{{ order.delivery_phone }}</span>
+                        </div>
+                        <p class="text-xs text-petrol-600 pl-[22px]">{{ order.delivery_address }}</p>
+                        <p
+                            v-if="order.delivery_notes"
+                            class="text-[11px] text-niebla-400 pl-[22px] italic"
+                        >
+                            {{ order.delivery_notes }}
+                        </p>
                     </div>
 
                     <div class="py-4 space-y-2.5 max-h-72 overflow-y-auto">
@@ -87,6 +107,13 @@
                     <div v-if="order.tip_amount > 0" class="flex justify-between text-petrol-600">
                         <span>Propina:</span>
                         <span>+${{ formatMoney(order.tip_amount) }}</span>
+                    </div>
+                    <div
+                        v-if="order.type === 'delivery'"
+                        class="flex justify-between text-petrol-600"
+                    >
+                        <span>Domicilio:</span>
+                        <span>${{ formatMoney(order.delivery_fee) }}</span>
                     </div>
                     <div
                         class="flex justify-between text-base font-bold text-petrol-800 pt-2 border-t border-aguamarina-100"
@@ -234,7 +261,7 @@
                 <AppButton
                     class="w-full"
                     size="md"
-                    :label="isSubmitting ? 'Generando factura y ticket...' : 'Emitir factura & cerrar mesa'"
+                    :label="isSubmitting ? 'Generando factura y ticket...' : (order?.table ? 'Emitir factura & cerrar mesa' : 'Emitir factura')"
                     :loading="isSubmitting"
                     :disabled="isSubmitting || Math.abs(remainingBalance) > 0.05"
                     @click="submitCheckout"
@@ -291,8 +318,10 @@ import { useRoute, useRouter } from 'vue-router';
 import {
     ArrowLeft,
     Banknote,
+    Bike,
     CheckCircle2,
     FileText,
+    MapPin,
     Plus,
     Receipt,
     Split,

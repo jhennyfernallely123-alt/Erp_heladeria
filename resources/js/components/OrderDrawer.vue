@@ -16,7 +16,7 @@
                     </span>
                     <div>
                         <h2 class="font-bold text-lg leading-tight">
-                            {{ orderStore.selectedTable ? orderStore.selectedTable.name : 'Venta para Llevar' }}
+                            {{ drawerTitle }}
                         </h2>
                         <p class="text-xs text-aguamarina-300 font-medium">
                             {{
@@ -73,6 +73,44 @@
                     </div>
 
                     <div class="flex-1 p-3 overflow-y-auto grid grid-cols-2 gap-2.5 content-start">
+                        <!-- Datos de entrega: solo para pedidos a domicilio -->
+                        <div
+                            v-if="orderStore.isDelivery"
+                            class="col-span-2 bg-aguamarina-50 border border-aguamarina-200 rounded-xl p-3 space-y-2.5"
+                        >
+                            <div class="flex items-center gap-1.5">
+                                <AppIcon :name="MapPin" :size="15" class="text-aguamarina-600" />
+                                <h4 class="text-[11px] font-bold uppercase tracking-wide text-petrol-700">
+                                    Datos de entrega
+                                </h4>
+                            </div>
+
+                            <div class="grid grid-cols-2 gap-2">
+                                <AppInput
+                                    v-model="orderStore.delivery.name"
+                                    label="Nombre de quien recibe"
+                                    placeholder="María López"
+                                />
+                                <AppInput
+                                    v-model="orderStore.delivery.phone"
+                                    label="Teléfono"
+                                    placeholder="300 123 4567"
+                                />
+                            </div>
+
+                            <AppInput
+                                v-model="orderStore.delivery.address"
+                                label="Dirección"
+                                placeholder="Cra 45 # 12-34, Apto 501"
+                            />
+
+                            <AppInput
+                                v-model="orderStore.delivery.notes"
+                                label="Referencias (opcional)"
+                                placeholder="Timbre en la portería, portón azul"
+                            />
+                        </div>
+
                         <button
                             v-for="prod in filteredProducts"
                             :key="prod.id"
@@ -212,6 +250,13 @@
                                 />
                             </div>
                             <div
+                                v-if="orderStore.isDelivery && orderStore.deliveryFee > 0"
+                                class="flex justify-between text-niebla-400"
+                            >
+                                <span>Domicilio:</span>
+                                <span>${{ formatMoney(orderStore.deliveryFee) }}</span>
+                            </div>
+                            <div
                                 class="flex justify-between text-sm font-bold text-petrol-800 pt-1 border-t border-aguamarina-100"
                             >
                                 <span>TOTAL:</span>
@@ -221,17 +266,25 @@
                             </div>
                         </div>
 
-                        <div class="grid grid-cols-2 gap-2">
+                        <p
+                            v-if="orderStore.deliveryMissing.length"
+                            class="text-[11px] text-amber-700 bg-amber-50 border border-amber-200 rounded-lg px-2.5 py-1.5"
+                        >
+                            Para enviar a domicilio falta: {{ orderStore.deliveryMissing.join(', ') }}.
+                        </p>
+
+                        <div class="grid gap-2" :class="canCharge ? 'grid-cols-2' : 'grid-cols-1'">
                             <AppButton
                                 variant="secondary"
                                 size="sm"
                                 class="w-full"
                                 :label="saving ? 'Guardando...' : 'Guardar Comanda'"
-                                :disabled="!orderStore.cartItems.length || saving"
+                                :disabled="!orderStore.cartItems.length || saving || orderStore.deliveryMissing.length > 0"
                                 :loading="saving"
                                 @click="handleSaveOrder"
                             />
                             <AppButton
+                                v-if="canCharge"
                                 size="sm"
                                 class="w-full"
                                 label="Cobrar / Facturar"
@@ -283,11 +336,13 @@
 <script setup>
 import { computed, ref } from 'vue';
 import { useRouter } from 'vue-router';
-import { CreditCard, IceCreamBowl, Minus, Plus, ShoppingBag, X } from 'lucide-vue-next';
+import { CreditCard, IceCreamBowl, MapPin, Minus, Plus, ShoppingBag, X } from 'lucide-vue-next';
 import AppButton from './ui/AppButton.vue';
 import AppBadge from './ui/AppBadge.vue';
+import AppInput from './ui/AppInput.vue';
 import AppIcon from './ui/AppIcon.vue';
 import AppModal from './ui/AppModal.vue';
+import { useAuthStore } from '../stores/auth';
 import { useOrderStore } from '../stores/orders';
 
 const props = defineProps({
@@ -299,7 +354,21 @@ const props = defineProps({
 const emit = defineEmits(['close', 'orderSaved']);
 
 const orderStore = useOrderStore();
+const authStore = useAuthStore();
 const router = useRouter();
+
+/**
+ * El mesero arma y modifica comandas, pero no cobra. Sin este chequeo el
+ * boton "Cobrar / Facturar" se le mostraba igual y el guard de rutas lo
+ * rebotaba a Inicio sin explicar nada.
+ */
+const canCharge = computed(() => authStore.can('checkout_invoice'));
+
+/** Titulo del encabezado: la mesa, o el tipo de venta sin mesa. */
+const drawerTitle = computed(() => {
+    if (orderStore.selectedTable) return orderStore.selectedTable.name;
+    return orderStore.isDelivery ? 'Domicilio' : 'Venta para Llevar';
+});
 
 const selectedCategory = ref(null);
 const selectedProductForVariant = ref(null);

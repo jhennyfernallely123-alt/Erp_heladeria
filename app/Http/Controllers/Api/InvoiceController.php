@@ -51,31 +51,41 @@ class InvoiceController extends BaseApiController
             return $this->errorResponse('Este pedido ya fue facturado y cerrado previamente.', 422);
         }
 
-        // Validate total payments matches order total
+        // El total lo calcula OrderService cuando arma el pedido y queda
+        // guardado. Se usa ese y no se recalcula acá: la formula del dinero
+        // vive en un solo lugar, y si se duplicara cualquier diferencia
+        // (por ejemplo la tarifa de un domicilio) haria fallar el cobro con
+        // "la suma de los pagos no coincide con el total a pagar".
+        $finalTotal = round((float) $order->total, 2);
+
         $totalPayments = array_sum(array_column($validated['payments'], 'amount'));
-        $subtotal = (float) $order->subtotal;
-        $tip = (float) ($validated['tip_amount'] ?? $order->tip_amount ?? 0);
-        $discount = (float) ($validated['discount_amount'] ?? $order->discount_total ?? 0);
-        $tax = (float) ($order->tax_total ?? 0);
-        $finalTotal = max(0, $subtotal - $discount + $tip + $tax);
 
         if (abs($totalPayments - $finalTotal) > 0.05) {
             return $this->errorResponse("La suma de los pagos (\${$totalPayments}) no coincide con el total a pagar (\${$finalTotal}).", 422);
         }
 
-        return DB::transaction(function () use ($order, $validated, $subtotal, $tip, $discount, $tax, $finalTotal) {
+        return DB::transaction(function () use ($order, $validated, $totalPayments, $finalTotal) {
+            // En un domicilio los datos de contacto salen del pedido, no del
+            // formulario: la comanda que va en la caja y la factura tienen que
+            // decir lo mismo.
+            $isDelivery = $order->isDelivery();
+
             $invoice = Invoice::create([
                 'order_id' => $order->id,
                 'invoice_number' => 'TEMP-' . uniqid(),
-                'customer_name' => $validated['customer_name'] ?? 'Consumidor Final',
+                'customer_name' => $isDelivery
+                    ? $order->delivery_name
+                    : ($validated['customer_name'] ?? 'Consumidor Final'),
                 'customer_doc_type' => $validated['customer_doc_type'] ?? 'CC',
                 'customer_doc_number' => $validated['customer_doc_number'] ?? '222222222222',
                 'customer_email' => $validated['customer_email'] ?? null,
-                'customer_phone' => $validated['customer_phone'] ?? null,
-                'subtotal' => $subtotal,
-                'tax_amount' => $tax,
-                'discount_amount' => $discount,
-                'tip_amount' => $tip,
+                'customer_phone' => $isDelivery
+                    ? $order->delivery_phone
+                    : ($validated['customer_phone'] ?? null),
+                'subtotal' => $order->subtotal,
+                'tax_amount' => $order->tax_total,
+                'discount_amount' => $order->discount_total,
+                'tip_amount' => $order->tip_amount,
                 'total' => $finalTotal,
                 'billing_mode' => $validated['billing_mode'] ?? 'internal',
             ]);

@@ -8,6 +8,12 @@
                     @click="openTakeawayOrder"
                 />
                 <AppButton
+                    v-if="canTakeDeliveries"
+                    label="Domicilio"
+                    :icon="Bike"
+                    @click="openDeliveryOrder"
+                />
+                <AppButton
                     variant="secondary"
                     :icon="RefreshCw"
                     :icon-size="18"
@@ -65,7 +71,7 @@
                         <AppBadge :tone="badgeTone(table.status)" :label="table.name" />
                         <p class="text-[11px] text-niebla-400 mt-2 font-medium flex items-center gap-1">
                             <AppIcon :name="Users" :size="13" />
-                            Capacidad: {{ table.capacity }} personas
+                            Capacidad: {{ table.capacity }} {{ table.capacity === 1 ? 'persona' : 'personas' }}
                         </p>
                     </div>
                     <AppIcon
@@ -123,6 +129,7 @@
 import { computed, onMounted, ref } from 'vue';
 import {
     Armchair,
+    Bike,
     BookmarkCheck,
     ChevronRight,
     IceCreamBowl,
@@ -138,10 +145,16 @@ import AppIcon from '../components/ui/AppIcon.vue';
 import OrderDrawer from '../components/OrderDrawer.vue';
 import { useTableStore } from '../stores/tables';
 import { useOrderStore } from '../stores/orders';
+import { useAuthStore } from '../stores/auth';
 import api from '../api';
 
 const tableStore = useTableStore();
 const orderStore = useOrderStore();
+const authStore = useAuthStore();
+
+// El domicilio lo toma quien contesta el telefono: admin y cajero. El backend
+// tambien lo valida con take_deliveries; esto solo esconde el boton.
+const canTakeDeliveries = computed(() => authStore.can('take_deliveries'));
 
 const isDrawerOpen = ref(false);
 const products = ref([]);
@@ -196,6 +209,13 @@ const handleTableClick = (table) => {
 
 const openTakeawayOrder = () => {
     orderStore.initNewOrder(null, 'takeaway');
+    isDrawerOpen.value = true;
+};
+
+const openDeliveryOrder = async () => {
+    orderStore.initNewOrder(null, 'delivery');
+    // La tarifa vigente se pide para que el total en vivo ya la incluya.
+    await orderStore.loadDeliveryFee();
     isDrawerOpen.value = true;
 };
 </script>

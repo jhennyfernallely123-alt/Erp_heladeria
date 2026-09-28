@@ -5,10 +5,12 @@ import {
     Wallet,
     BarChart3,
     Settings,
+    Clock,
 } from 'lucide-vue-next';
 
 export const navItems = [
     { label: 'Inicio', route: '/', name: 'pos', icon: LayoutDashboard, roles: ['admin', 'cashier', 'waiter', 'kitchen'] },
+    { label: 'Turnos', route: '/turnos', name: 'shifts', icon: Clock, roles: ['admin', 'waiter'] },
     { label: 'Productos', route: '/productos', name: 'products', icon: IceCreamBowl, roles: ['admin', 'cashier'] },
     { label: 'Inventario', route: '/inventario', name: 'inventory', icon: Boxes, roles: ['admin'] },
     { label: 'Caja', route: '/caja', name: 'cash-register', icon: Wallet, roles: ['admin', 'cashier'] },

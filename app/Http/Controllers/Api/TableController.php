@@ -10,7 +10,12 @@ class TableController extends BaseApiController
 {
     public function index(): JsonResponse
     {
+        // `number` es un string, asi que orderBy lo ordena alfabeticamente y
+        // "10" caeria antes que "2". Con la barra dividida hay 15 mesas, asi
+        // que se ordena primero por largo y despues por valor: dentro de un
+        // mismo largo el orden alfabetico coincide con el numerico.
         $tables = RestaurantTable::with(['activeOrder.items.product', 'activeOrder.items.variant', 'activeOrder.user'])
+            ->orderByRaw('LENGTH(number)')
             ->orderBy('number')
             ->get();
 

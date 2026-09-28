@@ -69,14 +69,14 @@
                 <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" />
                 <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z" />
             </svg>
-            <p class="text-sm text-niebla-400">Generando la factura…</p>
+            <p class="text-sm text-niebla-400">Generando el ticket…</p>
         </div>
 
         <div v-else-if="error" class="py-16 flex flex-col items-center gap-3 text-center">
             <div class="h-14 w-14 rounded-2xl bg-rose-50 flex items-center justify-center">
                 <AppIcon :name="AlertCircle" :size="26" class="text-rose-500" />
             </div>
-            <p class="text-sm font-semibold text-petrol-800">No se pudo previsualizar la factura</p>
+            <p class="text-sm font-semibold text-petrol-800">No se pudo previsualizar el ticket</p>
             <p class="text-xs text-niebla-400 max-w-sm">{{ error }}</p>
         </div>
 
@@ -91,29 +91,21 @@
         <template #footer>
             <div class="flex flex-wrap items-center justify-between gap-3">
                 <p v-if="meta" class="text-[11px] text-niebla-300">
-                    {{ meta.invoice_number }} · {{ formattedSize }}
-                    <span v-if="meta.size_bytes"> · generado {{ formattedDate }}</span>
+                    {{ meta.invoice_number }} · Ticket 80 mm · {{ formattedSize }}
+                    <span v-if="meta.generated_at"> · generado {{ formattedDate }}</span>
                 </p>
                 <span v-else></span>
 
                 <div class="flex items-center gap-2">
                     <AppButton
-                        v-if="showTicket"
-                        variant="secondary"
-                        size="sm"
-                        label="Ticket 80mm"
-                        :icon="Receipt"
-                        @click="printDocument(ticketUrl)"
-                    />
-                    <AppButton
-                        v-if="ticketUrl"
+                        v-if="url"
                         variant="secondary"
                         size="sm"
                         label="Descargar"
                         :icon="Download"
                         @click="download"
                     />
-                    <AppButton size="sm" label="Imprimir" :icon="Printer" @click="printDocument(url)" />
+                    <AppButton size="sm" label="Imprimir" :icon="Printer" @click="printDocument" />
                 </div>
             </div>
         </template>
@@ -122,7 +114,7 @@
 
 <script setup>
 import { computed, nextTick, ref, watch } from 'vue';
-import { AlertCircle, ChevronLeft, ChevronRight, Download, Printer, Receipt, ZoomIn, ZoomOut } from 'lucide-vue-next';
+import { AlertCircle, ChevronLeft, ChevronRight, Download, Printer, ZoomIn, ZoomOut } from 'lucide-vue-next';
 import AppButton from '../ui/AppButton.vue';
 import AppIcon from '../ui/AppIcon.vue';
 import AppModal from '../ui/AppModal.vue';
@@ -135,7 +127,6 @@ const props = defineProps({
     invoiceId: { type: [Number, String], default: null },
     title: { type: String, default: 'Factura' },
     subtitle: { type: String, default: '' },
-    showTicket: { type: Boolean, default: true },
 });
 
 const emit = defineEmits(['close']);
@@ -146,20 +137,37 @@ const canvas = ref(null);
 const loading = ref(false);
 const error = ref('');
 const meta = ref(null);
+
+/** URL del documento que se muestra: el ticket termico de 80 mm. */
 const url = ref('');
-const ticketUrl = ref('');
+
+/** Bytes reales del blob cargado, que es el peso del ticket y no el de la A4. */
+const docSize = ref(0);
 
 const page = ref(1);
 const totalPages = ref(0);
 const zoom = ref(1);
 const fitScale = ref(1);
 
+/** Proxy del documento, para leer paginas y dibujar. */
 let doc = null;
-let objectUrl = '';
+
+/**
+ * Loading task de pdf.js. Es el unico objeto con destroy() en v6, asi que es
+ * lo que hay que cerrar para no dejar workers huerfanos.
+ */
+let loadingTask = null;
 let renderTask = null;
 
+/**
+ * Token de la carga en curso. Si el modal se cierra mientras el PDF viaja, la
+ * respuesta llega tarde y sin este control se guardaria un documento que ya
+ * nadie limpio, quedado huerfano para siempre.
+ */
+let loadToken = 0;
+
 const formattedSize = computed(() => {
-    const bytes = meta.value?.size_bytes;
+    const bytes = docSize.value;
     if (!bytes) return '';
     return bytes > 1024 * 1024
         ? `${(bytes / 1024 / 1024).toFixed(1)} MB`
@@ -172,31 +180,64 @@ const formattedDate = computed(() => {
 });
 
 const cleanup = () => {
+    // Invalida cualquier carga en vuelo para que no se guarde nada tarde.
+    loadToken += 1;
+
     if (renderTask) {
         renderTask.cancel();
         renderTask = null;
     }
-    if (objectUrl) {
-        URL.revokeObjectURL(objectUrl);
-        objectUrl = '';
+
+    if (loadingTask) {
+        // En pdf.js v6 destroy() pertenece al loading task, no al proxy:
+        // llamarlo sobre el proxy daba "doc.destroy is not a function".
+        loadingTask.destroy().catch(() => {});
+        loadingTask = null;
     }
-    if (doc) {
-        doc.destroy();
-        doc = null;
+
+    doc = null;
+};
+
+/**
+ * Espera a que el <canvas> este montado.
+ *
+ * Mientras `loading` es true el modal muestra el spinner en lugar del
+ * documento, asi que el canvas recien existe cuando esa bandera baja. Sin
+ * esta espera, renderPage() se encuentra canvas.value === null y sale sin
+ * dibujar, dejando el canvas en su tamano por defecto de 300x150.
+ */
+const waitForCanvas = async (attempts = 40) => {
+    for (let i = 0; i < attempts; i++) {
+        if (canvas.value) return true;
+        await nextTick();
+        await new Promise((resolve) => setTimeout(resolve, 25));
     }
+    return false;
 };
 
 const renderPage = async () => {
     if (!doc || !canvas.value) return;
 
-    const target = doc.numPages === 1 ? doc.getPage(1) : doc.getPage(page.value);
-    const pdfPage = await target.promise;
+    // En pdf.js v6 `getPage()` ya devuelve una Promise<PDFPageProxy>. El codigo
+    // anterior hacia `await doc.getPage(n).promise`, que en v6 es
+    // `await undefined` y reventaba con "Cannot read properties of undefined
+    // (reading 'getViewport')", dejando el canvas en blanco.
+    const pdfPage = await doc.getPage(page.value);
     const base = pdfPage.getViewport({ scale: 1 });
 
     // El ancho disponible se mide sobre el contenedor, no sobre la ventana,
     // porque el modal cambia de tamano entre movil y escritorio.
     const available = canvas.value.parentElement.clientWidth - 2;
-    fitScale.value = Math.min(1.6, available / base.width);
+
+    // Un ticket de 80mm es angosto y muy alto. Si solo se ajustara al ancho,
+    // "Ajustar" dejaria un documento mas largo que la pantalla y habria que
+    // scrollear siempre, asi que tambien se limita por alto.
+    const availableHeight = window.innerHeight - 220;
+
+    fitScale.value = Math.max(
+        0.35,
+        Math.min(1.6, available / base.width, availableHeight / base.height)
+    );
 
     const viewport = pdfPage.getViewport({ scale: fitScale.value * zoom.value });
     const context = canvas.value.getContext('2d');
@@ -217,6 +258,7 @@ const renderPage = async () => {
 const load = async () => {
     if (!props.invoiceId) return;
 
+    const token = ++loadToken;
     loading.value = true;
     error.value = '';
     page.value = 1;
@@ -224,22 +266,48 @@ const load = async () => {
 
     try {
         const res = await api.get(`/invoices/${props.invoiceId}/preview`);
+        if (token !== loadToken) return;
+
         meta.value = res.data.data;
-        url.value = res.data.data.url;
-        ticketUrl.value = res.data.data.ticket_url;
+
+        // Lo que se previsualiza, imprime y descarga es el ticket de 80 mm,
+        // que es el documento que sale por la impresora termica del salon.
+        url.value = res.data.data.ticket_url;
 
         const blob = await fetchPdf(url.value, authStore.token);
-        doc = await openPdf(blob);
+        if (token !== loadToken) return;
+
+        docSize.value = blob.size;
+        loadingTask = await openPdf(blob);
+
+        if (token !== loadToken) {
+            // El modal se cerro mientras se abria el PDF: hay que cerrar esto
+            // a mano porque cleanup() ya corrio y no lo vio.
+            loadingTask.destroy().catch(() => {});
+            loadingTask = null;
+            return;
+        }
+
+        doc = await loadingTask.promise;
         totalPages.value = doc.numPages;
-
-        objectUrl = URL.createObjectURL(blob);
-
-        await nextTick();
-        await renderPage();
     } catch (err) {
+        if (token !== loadToken) return;
         error.value = err.response?.data?.message || err.message || 'Error desconocido';
     } finally {
-        loading.value = false;
+        if (token === loadToken) loading.value = false;
+    }
+
+    if (error.value || token !== loadToken) return;
+
+    // El dibujo va despues del finally, no antes: recien cuando `loading` es
+    // false el template monta el <canvas> en lugar del spinner. Ademas asi un
+    // error de red no intenta dibujar sobre un canvas que no existe.
+    if (await waitForCanvas()) {
+        try {
+            await renderPage();
+        } catch (err) {
+            error.value = err.message || 'No se pudo dibujar el ticket';
+        }
     }
 };
 
@@ -264,7 +332,7 @@ const download = async () => {
     const blob = await fetchPdf(url.value, authStore.token);
     const link = document.createElement('a');
     link.href = URL.createObjectURL(blob);
-    link.download = `${meta.value?.invoice_number || 'factura'}.pdf`;
+    link.download = `${meta.value?.invoice_number || 'ticket'}-ticket.pdf`;
     link.click();
     URL.revokeObjectURL(link.href);
 };
@@ -273,11 +341,11 @@ const download = async () => {
  * Imprimir delegando en el visor de PDF del navegador: mantiene el layout
  * exacto y usa la impresora del sistema sin re-renderizar nada.
  */
-const printDocument = async (target) => {
-    if (!target) return;
+const printDocument = async () => {
+    if (!url.value) return;
 
     try {
-        const blob = await fetchPdf(target, authStore.token);
+        const blob = await fetchPdf(url.value, authStore.token);
         const printUrl = URL.createObjectURL(blob);
         const frame = document.createElement('iframe');
         frame.style.position = 'fixed';

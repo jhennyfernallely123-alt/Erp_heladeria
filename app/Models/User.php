@@ -15,12 +15,16 @@ class User extends Authenticatable
     protected $fillable = [
         'name',
         'email',
+        'phone',
         'password',
     ];
 
     protected $hidden = [
         'password',
         'remember_token',
+        // El PIN es un hash de bcrypt. Nunca debe salir por la API: ni en
+        // claro ni el hash.
+        'pin',
     ];
 
     protected function casts(): array
@@ -29,6 +33,22 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    /** El usuario puede marcar turno en el modulo de turnos. */
+    public function canClockShift(): bool
+    {
+        return $this->can('clock_shift') && filled($this->pin);
+    }
+
+    public function workShifts()
+    {
+        return $this->hasMany(WorkShift::class);
+    }
+
+    public function activeWorkShift()
+    {
+        return $this->hasOne(WorkShift::class)->where('status', 'open')->latestOfMany();
     }
 
     public function orders()

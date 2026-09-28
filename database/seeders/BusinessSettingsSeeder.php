@@ -22,6 +22,7 @@ class BusinessSettingsSeeder extends Seeder
             'billing_mode' => 'internal', // internal or dian
             'tax_percentage' => '0', // 0% or 8% INC / 19% IVA if applicable
             'suggested_tip_percentage' => '10',
+            'delivery_fee' => '3000', // tarifa fija de envio a domicilio, en pesos
         ];
 
         foreach ($settings as $k => $v) {

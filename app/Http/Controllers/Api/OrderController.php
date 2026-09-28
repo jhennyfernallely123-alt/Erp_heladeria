@@ -31,12 +31,27 @@ class OrderController extends BaseApiController
 
     public function store(Request $request): JsonResponse
     {
+        // El permiso va antes de validar, para que un rol sin take_deliveries
+        // reciba 403 y no un 422 con el detalle de que campo le falta. No puede
+        // ir como middleware de ruta porque crear un pedido de mesa o para
+        // llevar es valido para todos: lo restringido es el valor type=delivery.
+        if (($request->input('type')) === 'delivery' && !$request->user()->can('take_deliveries')) {
+            return $this->errorResponse('No tienes permiso para tomar pedidos a domicilio.', 403);
+        }
+
+        $isDelivery = $request->input('type') === 'delivery';
+
         $validated = $request->validate([
             'table_id' => 'nullable|exists:restaurant_tables,id',
-            'type' => 'in:dine_in,takeaway',
+            'type' => 'nullable|in:dine_in,takeaway,delivery',
             'notes' => 'nullable|string',
             'tip_amount' => 'nullable|numeric|min:0',
             'discount_total' => 'nullable|numeric|min:0',
+            'work_shift_id' => 'nullable|integer',
+            'delivery_name' => $isDelivery ? 'required|string|max:120' : 'nullable|string|max:120',
+            'delivery_phone' => $isDelivery ? 'required|string|max:30' : 'nullable|string|max:30',
+            'delivery_address' => $isDelivery ? 'required|string|max:255' : 'nullable|string|max:255',
+            'delivery_notes' => 'nullable|string|max:500',
             'items' => 'required|array|min:1',
             'items.*.product_id' => 'required|exists:products,id',
             'items.*.product_variant_id' => 'nullable|exists:product_variants,id',

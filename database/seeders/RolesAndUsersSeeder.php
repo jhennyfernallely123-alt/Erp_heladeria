@@ -10,6 +10,9 @@ use Illuminate\Support\Facades\Hash;
 
 class RolesAndUsersSeeder extends Seeder
 {
+    /** PIN del mesero de prueba. Solo aplica la primera vez que se siembra. */
+    private const DEFAULT_WAITER_PIN = '1234';
+
     public function run(): void
     {
         // 1. Create Permissions
@@ -19,6 +22,8 @@ class RolesAndUsersSeeder extends Seeder
             'take_orders', 'update_orders',
             'checkout_invoice', 'manage_cash_register',
             'view_financial_reports', 'manage_settings',
+            'take_deliveries',
+            'clock_shift',
         ];
 
         foreach ($permissions as $perm) {
@@ -35,6 +40,8 @@ class RolesAndUsersSeeder extends Seeder
         $adminRole->syncPermissions(Permission::all());
 
         // Cashier permissions
+        // El cajero es quien contesta el telefono de los domicilios, asi que
+        // tambien es quien los toma.
         $cashierRole->syncPermissions([
             'view_products',
             'view_tables',
@@ -42,14 +49,18 @@ class RolesAndUsersSeeder extends Seeder
             'update_orders',
             'checkout_invoice',
             'manage_cash_register',
+            'take_deliveries',
         ]);
 
         // Waiter permissions
+        // clock_shift habilita el modulo de turnos: ver el listado de meseros
+        // y abrir un turno con el PIN propio.
         $waiterRole->syncPermissions([
             'view_products',
             'view_tables',
             'take_orders',
             'update_orders',
+            'clock_shift',
         ]);
 
         // Kitchen permissions
@@ -76,6 +87,13 @@ class RolesAndUsersSeeder extends Seeder
             ['name' => 'Mesero Turno 1', 'password' => Hash::make('password')]
         );
         $waiter->syncRoles([$waiterRole]);
+
+        // El PIN se guarda con hash. El admin puede resetearlo desde el modulo
+        // de turnos si el mesero lo olvida. firstOrCreate no lo sobreescribe en
+        // una reejecucion, asi que solo se asigna si falta.
+        if (blank($waiter->pin)) {
+            $waiter->forceFill(['pin' => Hash::make(self::DEFAULT_WAITER_PIN)])->save();
+        }
 
         $kitchen = User::firstOrCreate(
             ['email' => 'cocina@heladeria.com'],

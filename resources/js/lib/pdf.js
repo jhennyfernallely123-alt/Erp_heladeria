@@ -36,7 +36,18 @@ export async function fetchPdf(url, token) {
     return response.blob();
 }
 
+/**
+ * Abre un PDF y devuelve el loading task, no el PDFDocumentProxy.
+ *
+ * Es a proposito: en pdf.js v6 el proxy solo expone cleanup(), mientras que
+ * destroy() —el unico que cierra el documento y libera el worker— vive en el
+ * PDFDocumentLoadingTask que devuelve getDocument(). Si solo se devolviera el
+ * proxy, despues no habria forma de cerrar el documento y cada apertura
+ * dejaria un worker huerfano.
+ *
+ * El proxy se obtiene con `await task.promise`.
+ */
 export async function openPdf(blob) {
     const pdfjsLib = await getPdfjs();
-    return pdfjsLib.getDocument({ data: await blob.arrayBuffer() }).promise;
+    return pdfjsLib.getDocument({ data: await blob.arrayBuffer() });
 }

@@ -352,7 +352,16 @@
                     <span>{{ $invoice->customer_doc_type ?? 'CC' }}</span>
                     <span>{{ $invoice->customer_doc_number ?? '—' }}</span>
                 </div>
-                @if ($invoice->order?->table)
+                @if ($invoice->order?->isDelivery())
+                    @if ($invoice->customer_phone)
+                        <div class="row"><span>Teléfono</span><span>{{ $invoice->customer_phone }}</span></div>
+                    @endif
+                    <div class="row"><span>Dirección</span><span>{{ $invoice->order->delivery_address }}</span></div>
+                    @if ($invoice->order->delivery_notes)
+                        <div class="row"><span>Referencias</span><span>{{ $invoice->order->delivery_notes }}</span></div>
+                    @endif
+                    <div class="row"><span>Origen</span><span>Domicilio</span></div>
+                @elseif ($invoice->order?->table)
                     <div class="row"><span>Mesa</span><span>{{ $invoice->order->table->name }}</span></div>
                 @else
                     <div class="row"><span>Origen</span><span>Venta para llevar</span></div>
@@ -425,6 +434,9 @@
                 @endif
                 @if ((float) $invoice->tip_amount > 0)
                     <div class="total-line"><span>Propina</span><span>$ {{ number_format((float) $invoice->tip_amount, 0) }}</span></div>
+                @endif
+                @if ($invoice->order && (float) $invoice->order->delivery_fee > 0)
+                    <div class="total-line"><span>Domicilio</span><span>$ {{ number_format((float) $invoice->order->delivery_fee, 0) }}</span></div>
                 @endif
                 <div class="total-grand">
                     <span>Total</span>

@@ -17,8 +17,17 @@ class TablesSeeder extends Seeder
             ['number' => '5', 'name' => 'Mesa 5 (Familiar)', 'capacity' => 6],
             ['number' => '6', 'name' => 'Mesa 6 (Terraza)', 'capacity' => 4],
             ['number' => '7', 'name' => 'Mesa 7 (Terraza)', 'capacity' => 4],
-            ['number' => '8', 'name' => 'Barra / Mostrador', 'capacity' => 8],
         ];
+
+        // La barra no es una mesa de 8 personas: son 8 sillas y cada una se
+        // cobra por separado, asi que son 8 mesas de capacidad 1.
+        for ($seat = 1; $seat <= 8; $seat++) {
+            $tables[] = [
+                'number' => (string) (7 + $seat),
+                'name' => "Barra {$seat}",
+                'capacity' => 1,
+            ];
+        }
 
         foreach ($tables as $tbl) {
             RestaurantTable::firstOrCreate(

@@ -43,7 +43,16 @@
     <div>
         <div><strong>Cliente:</strong> {{ $invoice->customer_name }}</div>
         <div><strong>Doc:</strong> {{ $invoice->customer_doc_type }} {{ $invoice->customer_doc_number }}</div>
-        @if($invoice->order && $invoice->order->table)
+        @if($invoice->order && $invoice->order->isDelivery())
+            @if($invoice->customer_phone)
+            <div><strong>Teléfono:</strong> {{ $invoice->customer_phone }}</div>
+            @endif
+            <div><strong>Dirección:</strong> {{ $invoice->order->delivery_address }}</div>
+            @if($invoice->order->delivery_notes)
+            <div><strong>Referencias:</strong> {{ $invoice->order->delivery_notes }}</div>
+            @endif
+            <div><strong>Entrega:</strong> Domicilio</div>
+        @elseif($invoice->order && $invoice->order->table)
             <div><strong>Mesa:</strong> {{ $invoice->order->table->name }}</div>
         @else
             <div><strong>Tipo:</strong> Venta Mostrador / Para Llevar</div>
@@ -98,6 +107,12 @@
         <tr>
             <td>Propina Voluntaria:</td>
             <td class="text-right">${{ number_format($invoice->tip_amount, 0, ',', '.') }}</td>
+        </tr>
+        @endif
+        @if($invoice->order && $invoice->order->delivery_fee > 0)
+        <tr>
+            <td>Domicilio:</td>
+            <td class="text-right">${{ number_format($invoice->order->delivery_fee, 0, ',', '.') }}</td>
         </tr>
         @endif
         <tr class="font-bold" style="font-size: 13px;">
