@@ -27,7 +27,6 @@
                     <option value="inactive">Inactivos</option>
                 </AppSelect>
             </div>
-            <span class="text-xs text-niebla-400">{{ filtered.length }} productos</span>
         </div>
 
         <div class="space-y-4">

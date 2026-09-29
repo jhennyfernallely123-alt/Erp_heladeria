@@ -178,25 +178,11 @@
                                 {{ e.vacation.available_days }}d
                             </span>
                         </div>
-                        <p class="text-[10px] text-niebla-400 mt-0.5">
-                            de {{ e.vacation.accrued }} devengadas · {{ e.vacation.used }} usadas
-                        </p>
                     </div>
                     <div v-else class="rounded-xl px-3 py-2 bg-amber-50">
                         <p class="text-[11px] text-amber-700">
                             Falta la fecha de contratación para calcular el saldo
                         </p>
-                    </div>
-
-                    <div v-if="e.upcoming?.length" class="flex flex-wrap gap-1.5">
-                        <span
-                            v-for="u in e.upcoming"
-                            :key="u.type"
-                            class="inline-flex items-center gap-1 text-[10px] font-semibold px-2 py-0.5 rounded-full"
-                            :class="u.type === 'birthday' ? 'bg-rose-50 text-rose-700' : 'bg-aguamarina-50 text-aguamarina-700'"
-                        >
-                            {{ u.label }} en {{ u.days_away }}d
-                        </span>
                     </div>
                 </div>
             </div>

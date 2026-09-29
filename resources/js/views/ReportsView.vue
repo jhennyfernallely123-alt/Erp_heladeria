@@ -63,13 +63,49 @@
                 ${{ formatMoney(summary.net_cash_flow) }}
             </p>
 
+            <!-- Gráficos -->
+            <div class="space-y-6">
+                <BarChartCard
+                    title="Ventas por día"
+                    :hint="`${daily.length} días`"
+                    :labels="chartLabels"
+                    :series="dailySalesSeries"
+                    :height="'280px'"
+                />
+
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <BarChartCard
+                        title="Efectivo vs otros medios"
+                        hint="Por día"
+                        :labels="chartLabels"
+                        :series="paymentSplitSeries"
+                        :stacked="true"
+                    />
+
+                    <BarChartCard
+                        title="Egresos de caja por día"
+                        hint="Gastos y retiros"
+                        :labels="chartLabels"
+                        :series="expensesSeries"
+                    />
+                </div>
+
+                <BarChartCard
+                    title="Productos más vendidos"
+                    hint="Por unidades"
+                    :labels="topProductLabels"
+                    :series="topProductSeries"
+                    :height="'240px'"
+                />
+            </div>
+
             <!-- Tablas -->
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div class="bg-white p-6 rounded-2xl border border-aguamarina-100 shadow-sm space-y-4">
                     <div class="flex items-center justify-between gap-2">
                         <h3 class="font-bold text-sm text-petrol-800 flex items-center gap-2">
                             <AppIcon :name="Trophy" :size="17" class="text-aguamarina-600" />
-                            Top productos más vendidos
+                            Detalle de productos
                         </h3>
                         <span class="text-xs text-aguamarina-700 font-semibold">Ranking de salida</span>
                     </div>
@@ -151,7 +187,7 @@
 </template>
 
 <script setup>
-import { onMounted, ref } from 'vue';
+import { computed, onMounted, ref } from 'vue';
 import {
     Banknote,
     CreditCard,
@@ -169,6 +205,7 @@ import AppButton from '../components/ui/AppButton.vue';
 import AppEmptyState from '../components/ui/AppEmptyState.vue';
 import AppIcon from '../components/ui/AppIcon.vue';
 import StatCard from '../components/ui/StatCard.vue';
+import BarChartCard from '../components/reports/BarChartCard.vue';
 import api from '../api';
 
 const summary = ref(null);
@@ -177,6 +214,48 @@ const startDate = ref(new Date().toISOString().substring(0, 10));
 const endDate = ref(new Date().toISOString().substring(0, 10));
 
 const formatMoney = (val) => Number(val || 0).toLocaleString('es-CO');
+
+/** Colores de la marca, para que los gráficos no se vean ajenos al resto. */
+const COLORS = {
+    petrol: '#2d6b7a',
+    aguamarina: '#4caaa7',
+    rose: '#e07a8a',
+    amber: '#e0a458',
+    emerald: '#5aa77a',
+};
+
+const daily = computed(() => summary.value?.daily || []);
+
+const chartLabels = computed(() => daily.value.map((d) => d.label));
+
+const dailySalesSeries = computed(() => [
+    { label: 'Ventas', data: daily.value.map((d) => d.total), color: COLORS.petrol },
+]);
+
+const paymentSplitSeries = computed(() => [
+    { label: 'Efectivo', data: daily.value.map((d) => d.cash), color: COLORS.aguamarina },
+    { label: 'Otros medios', data: daily.value.map((d) => d.other), color: COLORS.petrol },
+]);
+
+const expensesSeries = computed(() => [
+    { label: 'Egresos', data: daily.value.map((d) => d.expenses), color: COLORS.rose },
+]);
+
+const topProductLabels = computed(() =>
+    (summary.value?.top_products || []).map((tp) => {
+        // Los nombres largos se parten para que la barra no quede chiquita.
+        const name = String(tp.name || '');
+        return name.length > 18 ? `${name.slice(0, 17)}…` : name;
+    })
+);
+
+const topProductSeries = computed(() => [
+    {
+        label: 'Unidades vendidas',
+        data: (summary.value?.top_products || []).map((tp) => Number(tp.total_qty)),
+        color: COLORS.aguamarina,
+    },
+]);
 
 const paymentLabels = { cash: 'Efectivo', card: 'Tarjeta', transfer: 'Transferencia' };
 const paymentIcons = { cash: Banknote, card: CreditCard, transfer: Smartphone };

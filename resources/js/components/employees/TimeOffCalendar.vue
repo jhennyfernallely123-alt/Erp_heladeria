@@ -20,8 +20,13 @@
                     variant="secondary"
                     :icon="ChevronRight"
                     aria-label="Mes siguiente"
-                    :disabled="isCurrentMonth"
                     @click="shiftMonth(1)"
+                />
+                <AppButton
+                    v-if="!isCurrentMonth"
+                    variant="secondary"
+                    label="Hoy"
+                    @click="goToToday"
                 />
             </div>
         </div>
@@ -303,6 +308,15 @@ const isCurrentMonth = computed(() => {
         cursor.value.getMonth() === now.getMonth()
     );
 });
+
+/**
+ * Botón para volver al mes en curso, que solo aparece cuando se está mirando
+ * otro. Antes había que_ir atrás mes a mes hasta llegar, y con varios meses
+ * por delante eso es un fastidioso.
+ */
+const goToToday = () => {
+    cursor.value = new Date();
+};
 
 /**
  * Días ya enviados, indexados por fecha, para pintar el calendario. Se marca el

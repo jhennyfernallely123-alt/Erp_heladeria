@@ -1,8 +1,12 @@
 <template>
     <div class="p-6 max-w-6xl mx-auto space-y-6">
         <PageHeader
-            title="Turnos de Mesero"
-            subtitle="Marca la entrada y la salida de cada persona, y controla lo que hizo en el turno"
+            :title="isAdmin ? 'Control de Meseros' : 'Turnos de Mesero'"
+            :subtitle="
+                isAdmin
+                    ? 'Supervisión: quién está trabajando, qué rindió cada uno y gestión de PINs'
+                    : 'Marca la entrada y la salida de cada persona, y controla lo que hizo en el turno'
+            "
         >
             <template #actions>
                 <AppButton
@@ -16,85 +20,101 @@
             </template>
         </PageHeader>
 
-        <!-- Turno de este dispositivo -->
-        <div
-            v-if="shiftStore.activeShift"
-            class="bg-white rounded-2xl border border-aguamarina-200 shadow-card p-6"
-        >
-            <div class="flex items-start justify-between gap-4 flex-wrap">
-                <div class="flex items-start gap-3">
-                    <div
-                        class="h-12 w-12 rounded-2xl bg-aguamarina-100 flex items-center justify-center shrink-0"
-                    >
-                        <AppIcon :name="UserCheck" :size="24" class="text-aguamarina-600" />
+        <!--
+            El bloque de marcar turno es del mesero, no del admin: el admin no
+            opera el dispositivo, supervisa. El apartado de arriba ya le alcanza
+            para ver quién está trabajando y cerrarle el turno si se quedó
+            abierto.
+        -->
+        <template v-if="!isAdmin">
+            <!-- Turno de este dispositivo -->
+            <div
+                v-if="shiftStore.activeShift"
+                class="bg-white rounded-2xl border border-aguamarina-200 shadow-card p-6"
+            >
+                <div class="flex items-start justify-between gap-4 flex-wrap">
+                    <div class="flex items-start gap-3">
+                        <div
+                            class="h-12 w-12 rounded-2xl bg-aguamarina-100 flex items-center justify-center shrink-0"
+                        >
+                            <AppIcon :name="UserCheck" :size="24" class="text-aguamarina-600" />
+                        </div>
+                        <div>
+                            <p
+                                class="text-xs font-semibold uppercase tracking-wide text-aguamarina-600"
+                            >
+                                Turno activo en este dispositivo
+                            </p>
+                            <h2 class="text-xl font-bold text-petrol-800">
+                                {{ shiftStore.activeWorkerName }}
+                            </h2>
+                            <p class="text-sm text-niebla-400 mt-0.5">
+                                Entrada {{ formatTime(shiftStore.activeShift.opened_at) }} ·
+                                {{ formatMinutes(shiftStore.activeShift.worked_minutes) }}
+                                trabajando
+                            </p>
+                        </div>
                     </div>
-                    <div>
-                        <p class="text-xs font-semibold uppercase tracking-wide text-aguamarina-600">
-                            Turno activo en este dispositivo
-                        </p>
-                        <h2 class="text-xl font-bold text-petrol-800">
-                            {{ shiftStore.activeWorkerName }}
-                        </h2>
-                        <p class="text-sm text-niebla-400 mt-0.5">
-                            Entrada {{ formatTime(shiftStore.activeShift.opened_at) }} ·
-                            {{ formatMinutes(shiftStore.activeShift.worked_minutes) }} trabajando
-                        </p>
-                    </div>
+
+                    <AppButton
+                        variant="secondary"
+                        label="Cerrar turno"
+                        :icon="LogOut"
+                        :loading="shiftStore.saving"
+                        @click="confirmClose"
+                    />
+                </div>
+            </div>
+
+            <!-- Sin turno: elegir persona -->
+            <div v-else class="space-y-4">
+                <div
+                    class="bg-aguamarina-50 border border-aguamarina-200 rounded-2xl p-4 flex items-start gap-3"
+                >
+                    <AppIcon
+                        :name="Info"
+                        :size="18"
+                        class="text-aguamarina-600 mt-0.5 shrink-0"
+                    />
+                    <p class="text-sm text-petrol-700">
+                        Este dispositivo no tiene turno abierto. Elegí quién está trabajando e
+                        ingresá su PIN de 4 dígitos para empezar. Nadie más puede marcar su turno sin
+                        ese PIN.
+                    </p>
                 </div>
 
-                <AppButton
-                    variant="secondary"
-                    label="Cerrar turno"
-                    :icon="LogOut"
-                    :loading="shiftStore.saving"
-                    @click="confirmClose"
-                />
-            </div>
-        </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                    <button
+                        v-for="w in shiftStore.workers"
+                        :key="w.id"
+                        type="button"
+                        class="text-left bg-white rounded-2xl border border-aguamarina-200 hover:border-aguamarina-500 hover:shadow-card transition p-4 flex items-center gap-3"
+                        :disabled="shiftStore.saving"
+                        @click="pickWorker(w)"
+                    >
+                        <div
+                            class="h-11 w-11 rounded-xl bg-aguamarina-100 flex items-center justify-center shrink-0"
+                        >
+                            <AppIcon :name="User" :size="20" class="text-aguamarina-600" />
+                        </div>
+                        <div class="min-w-0">
+                            <p class="font-bold text-petrol-800 truncate">{{ w.name }}</p>
+                            <p class="text-xs text-niebla-400 truncate">
+                                {{ w.phone || w.email }}
+                            </p>
+                        </div>
+                    </button>
+                </div>
 
-        <!-- Sin turno: elegir persona -->
-        <div v-else class="space-y-4">
-            <div
-                class="bg-aguamarina-50 border border-aguamarina-200 rounded-2xl p-4 flex items-start gap-3"
-            >
-                <AppIcon :name="Info" :size="18" class="text-aguamarina-600 mt-0.5 shrink-0" />
-                <p class="text-sm text-petrol-700">
-                    Este dispositivo no tiene turno abierto. Elegí quién está trabajando e
-                    ingresá su PIN de 4 dígitos para empezar. Nadie más puede marcar su turno
-                    sin ese PIN.
+                <p
+                    v-if="!shiftStore.workers.length"
+                    class="text-sm text-niebla-400 text-center py-8"
+                >
+                    Todavía no hay meseros con PIN configurado. Pídele al administrador que los
+                    agregue.
                 </p>
             </div>
-
-            <div
-                class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3"
-            >
-                <button
-                    v-for="w in shiftStore.workers"
-                    :key="w.id"
-                    type="button"
-                    class="text-left bg-white rounded-2xl border border-aguamarina-200 hover:border-aguamarina-500 hover:shadow-card transition p-4 flex items-center gap-3"
-                    :disabled="shiftStore.saving"
-                    @click="pickWorker(w)"
-                >
-                    <div
-                        class="h-11 w-11 rounded-xl bg-aguamarina-100 flex items-center justify-center shrink-0"
-                    >
-                        <AppIcon :name="User" :size="20" class="text-aguamarina-600" />
-                    </div>
-                    <div class="min-w-0">
-                        <p class="font-bold text-petrol-800 truncate">{{ w.name }}</p>
-                        <p class="text-xs text-niebla-400 truncate">
-                            {{ w.phone || w.email }}
-                        </p>
-                    </div>
-                </button>
-            </div>
-
-            <p v-if="!shiftStore.workers.length" class="text-sm text-niebla-400 text-center py-8">
-                Todavía no hay meseros con PIN configurado. Pídele al administrador que los
-                agregue.
-            </p>
-        </div>
+        </template>
 
         <!-- Modal de PIN -->
         <AppModal

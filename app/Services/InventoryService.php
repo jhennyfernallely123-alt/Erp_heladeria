@@ -7,6 +7,17 @@ use App\Models\ProductStock;
 use App\Models\ProductVariant;
 use Illuminate\Support\Collection;
 
+/**
+ * Movimientos de stock por producto y variante.
+ *
+ * YA NO SE USA. El inventario de la heladería pasó a ser la lista de insumos
+ * (Supply / SupplyService), que es un conteo manual del cierre y no un stock
+ * que se descuenta solo.
+ *
+ * Se conserva el servicio y el controller por si hay que volver atrás, pero
+ * OrderService ya no llama a deductStock ni a restoreStock: vender no toca
+ * ningún stock. Ver OrderService.
+ */
 class InventoryService
 {
     public function deductStock(Product $product, ?ProductVariant $variant, float $quantity): void

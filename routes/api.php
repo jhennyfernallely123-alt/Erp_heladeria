@@ -9,7 +9,9 @@ use App\Http\Controllers\Api\InventoryController;
 use App\Http\Controllers\Api\InvoiceController;
 use App\Http\Controllers\Api\OrderController;
 use App\Http\Controllers\Api\ProductController;
+use App\Http\Controllers\Api\PurchaseController;
 use App\Http\Controllers\Api\SettingController;
+use App\Http\Controllers\Api\SupplyController;
 use App\Http\Controllers\Api\TableController;
 use App\Http\Controllers\Api\TeamController;
 use App\Http\Controllers\Api\UserController;
@@ -53,7 +55,29 @@ Route::prefix('v1')->group(function () {
         Route::patch('/products/{product}/toggle-active', [ProductController::class, 'toggleActive']);
         Route::post('/products/{product}/image', [ProductController::class, 'uploadImage']);
 
-        // Inventory (admin only)
+        // Insumos de la heladería (solo admin).
+        //
+        // No hay stock mínimo ni descuento automático: el admin cuenta lo que
+        // queda al cierre y lo carga acá. Ver SupplyService.
+        Route::middleware('role:admin')->group(function () {
+            Route::get('/supplies', [SupplyController::class, 'index']);
+            Route::post('/supplies', [SupplyController::class, 'store']);
+            Route::patch('/supplies/{supply}', [SupplyController::class, 'update']);
+            Route::post('/supplies/{supply}/count', [SupplyController::class, 'count']);
+            Route::delete('/supplies/{supply}', [SupplyController::class, 'destroy']);
+
+            // Lista de compras para el día siguiente.
+            Route::get('/purchases', [PurchaseController::class, 'index']);
+            Route::post('/purchases', [PurchaseController::class, 'store']);
+            Route::patch('/purchases/{purchase}', [PurchaseController::class, 'update']);
+            Route::post('/purchases/{purchase}/bought', [PurchaseController::class, 'markBought']);
+            Route::post('/purchases/{purchase}/cancel', [PurchaseController::class, 'cancel']);
+            Route::delete('/purchases/{purchase}', [PurchaseController::class, 'destroy']);
+        });
+
+        // Inventario viejo por producto y variante. Queda sin uso: el
+        // controller existe para no romper nada si algo lo llama, pero la vista
+        // de Inventario ya no lo usa.
         Route::middleware('role:admin')->group(function () {
             Route::get('/inventory', [InventoryController::class, 'index']);
             Route::get('/inventory/low-stock', [InventoryController::class, 'lowStock']);

@@ -21,10 +21,13 @@
                 </div>
 
                 <div class="illustration-area">
-                    <!-- Ilustracion: galera de helado con frutos y hoja de menta -->
                     <div class="icecream-art">
                         <div class="cup-art">
-                            <IceCreamCupArt />
+                            <img
+                                :src="CUP_IMAGE"
+                                alt="Vaso de helado con tres sabores, galera y cerezas"
+                                class="h-full w-full object-contain"
+                            />
                         </div>
                     </div>
                 </div>
@@ -165,11 +168,16 @@ import {
 } from 'lucide-vue-next';
 import AppIcon from '../components/ui/AppIcon.vue';
 import IceCreamConeArt from '../components/login/IceCreamConeArt.vue';
-import IceCreamCupArt from '../components/login/IceCreamCupArt.vue';
 import { useAuthStore } from '../stores/auth';
 
 const authStore = useAuthStore();
 const router = useRouter();
+
+// Va en una constante y no como src="/imagen.png" literal: Vite intenta
+// resolver en el build los src de los templates como si fueran imports, y
+// una ruta absoluta a public/ no la encuentra. Asi queda como string y sale
+// tal cual al navegador.
+const CUP_IMAGE = '/imagen.png';
 
 const email = ref('admin@heladeria.com');
 const password = ref('password');

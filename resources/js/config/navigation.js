@@ -7,6 +7,7 @@ import {
     Settings,
     Clock,
     Users,
+    ShoppingCart,
 } from 'lucide-vue-next';
 
 // El admin no opera el punto de venta ni la gaveta: administra el negocio.
@@ -18,6 +19,7 @@ export const navItems = [
     { label: 'Turnos', route: '/turnos', name: 'shifts', icon: Clock, roles: ['admin', 'waiter'] },
     { label: 'Productos', route: '/productos', name: 'products', icon: IceCreamBowl, roles: ['admin', 'cashier'] },
     { label: 'Inventario', route: '/inventario', name: 'inventory', icon: Boxes, roles: ['admin'] },
+    { label: 'Compras', route: '/compras', name: 'purchases', icon: ShoppingCart, roles: ['admin'] },
     { label: 'Caja', route: '/caja/resumen', name: 'cash-overview', icon: Wallet, roles: ['admin'] },
     { label: 'Caja', route: '/caja', name: 'cash-register', icon: Wallet, roles: ['cashier'] },
     { label: 'Equipo', route: '/empleados/equipo', name: 'team', icon: Users, roles: ['admin'] },

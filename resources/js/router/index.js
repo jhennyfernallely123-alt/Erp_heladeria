@@ -52,6 +52,12 @@ const routes = [
         meta: { requiresAuth: true, roles: ['admin'] },
     },
     {
+        path: '/compras',
+        name: 'purchases',
+        component: () => import('../views/PurchasesView.vue'),
+        meta: { requiresAuth: true, roles: ['admin'] },
+    },
+    {
         // Operacion de gaveta: abrir, movimientos y arqueo. Solo el cajero.
         path: '/caja',
         name: 'cash-register',

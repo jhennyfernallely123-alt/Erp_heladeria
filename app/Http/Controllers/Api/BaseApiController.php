@@ -7,12 +7,18 @@ use Illuminate\Http\JsonResponse;
 
 class BaseApiController extends Controller
 {
-    protected function successResponse($data = null, string $message = 'Operación exitosa', int $status = 200): JsonResponse
+    /**
+     * $meta se usa para lo que va en el sobre pero NO es la lista: por ejemplo
+     * las tarjetas de resumen del inventario. El frontend lo lee de
+     * response.meta, separado de data.
+     */
+    protected function successResponse($data = null, ?string $message = 'Operación exitosa', int $status = 200, array $meta = []): JsonResponse
     {
         return response()->json([
             'status' => 'success',
             'message' => $message,
             'data' => $data,
+            'meta' => $meta ?: null,
         ], $status);
     }
 

@@ -90,28 +90,11 @@
                 />
             </div>
 
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <AppInput
-                    v-model="form.cost_price"
-                    label="Precio de costo"
-                    type="number"
-                    :error="firstError('cost_price')"
-                />
-                <div class="space-y-1.5">
-                    <p class="text-xs font-semibold text-petrol-700">Margen estimado</p>
-                    <div
-                        class="rounded-xl border border-aguamarina-100 bg-aguamarina-50 px-3.5 py-2.5 text-sm font-semibold"
-                        :class="marginClass"
-                    >
-                        {{ marginLabel }}
-                    </div>
-                </div>
-            </div>
-
             <AppTextarea
                 v-model="form.description"
-                label="Descripción"
+                label="Ingredientes"
                 :rows="3"
+                placeholder="Leche, crema, azúcar, fresa natural..."
                 :error="firstError('description')"
             />
 
@@ -142,9 +125,8 @@
                         <AppIcon :name="Trash2" :size="15" />
                     </button>
                 </div>
-                <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <AppInput v-model="variant.name" label="Nombre" placeholder="3 Bolas" />
-                    <AppInput v-model="variant.cost_price" label="Costo" type="number" />
                     <AppInput v-model="variant.sale_price" label="Venta" type="number" />
                 </div>
             </div>
@@ -251,20 +233,6 @@ watch(
         }
     }
 );
-
-const margin = computed(() => Number(form.sale_price || 0) - Number(form.cost_price || 0));
-const marginClass = computed(() => (margin.value > 0 ? 'text-emerald-700' : 'text-niebla-400'));
-
-const marginLabel = computed(() => {
-    const sale = Number(form.sale_price || 0);
-
-    if (sale <= 0) {
-        return '—';
-    }
-
-    const percent = Math.round((margin.value / sale) * 100);
-    return `$ ${margin.value.toLocaleString('es-CO')} (${percent}%)`;
-});
 
 const onFileChange = (event) => {
     const file = event.target.files?.[0];
