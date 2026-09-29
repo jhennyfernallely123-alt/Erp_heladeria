@@ -21,33 +21,11 @@
                 </div>
 
                 <div class="illustration-area">
-                    <!-- Ilustracion: vaso con tres sabores, galera y chispas -->
+                    <!-- Ilustracion: galera de helado con frutos y hoja de menta -->
                     <div class="icecream-art">
-                        <!-- Adornos sueltos, como en la referencia -->
-                        <span class="doodle doodle-heart-left">
-                            <AppIcon :name="Heart" :size="28" class="text-aguamarina-500" />
-                        </span>
-                        <span class="doodle doodle-dash-left" />
-                        <span class="doodle doodle-dash-left-2" />
-                        <span class="doodle doodle-heart-right">
-                            <AppIcon :name="Heart" :size="24" class="text-aguamarina-500" />
-                        </span>
-
                         <div class="cup-art">
                             <IceCreamCupArt />
                         </div>
-                    </div>
-
-                    <!-- Mensaje decorativo -->
-                    <div class="welcome-note">
-                        ¡Bienvenido<br />
-                        a tu heladería<br />
-                        favorita!
-                        <span class="note-hearts">
-                            <span class="note-bar" />
-                            <AppIcon :name="Heart" :size="18" class="fill-petrol-600 text-petrol-600" />
-                            <span class="note-bar" />
-                        </span>
                     </div>
                 </div>
             </div>
@@ -69,27 +47,9 @@
 
         <!-- ============ PANEL DERECHO ============ -->
         <section class="form-panel">
-            <div class="top-note">
-                ¡El sabor<br />
-                también se<br />
-                administra!
-                <AppIcon
-                    :name="Heart"
-                    :size="13"
-                    class="fill-aguamarina-600 text-aguamarina-600 inline-block align-baseline"
-                />
-            </div>
-
             <div class="login-card">
                 <header class="form-header">
-                    <h2>
-                        Inicia sesión
-                        <AppIcon
-                            :name="Sparkles"
-                            :size="16"
-                            class="inline-block align-baseline text-aguamarina-300"
-                        />
-                    </h2>
+                    <h2>Inicia sesión</h2>
                     <p>
                         Selecciona tu perfil e ingresa tus credenciales<br />
                         para continuar.
@@ -197,7 +157,6 @@ import {
     Leaf,
     Lock,
     ShieldCheck,
-    Sparkles,
     Smile,
     User,
     UserRound,
@@ -279,41 +238,53 @@ const submitLogin = async () => {
     color: #245c65;
 }
 
-/* ============ PANEL IZQUIERDO ============ */
-.brand-panel {
-    position: relative;
-    min-height: 100vh;
-    padding: 30px 42px 26px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: space-between;
-    overflow: hidden;
-}
-
-/* Formas decorativas del fondo: banda diagonal arriba y ola abajo */
-.brand-panel::before {
+/*
+ * Formas decorativas del fondo: banda diagonal arriba y ola abajo.
+ *
+ * Van en .login-page y no en el panel izquierdo porque el fondo es uno solo:
+ * con las formas en el panel, la banda terminaba justo en la mitad de la
+ * pantalla y el diseño se veía partido. Acá ocupan el ancho completo y pasan
+ * por debajo del formulario, que va con z-index 1.
+ */
+.login-page::before {
     content: '';
     position: absolute;
-    width: 760px;
-    height: 420px;
-    top: -200px;
-    right: -220px;
+    width: 1100px;
+    height: 460px;
+    top: -230px;
+    right: -180px;
     background: #cdeeea;
     border-radius: 0 0 0 46%;
     transform: rotate(-18deg);
 }
 
-.brand-panel::after {
+.login-page::after {
     content: '';
     position: absolute;
-    width: 900px;
-    height: 260px;
-    bottom: -140px;
-    left: -200px;
+    width: 1500px;
+    height: 300px;
+    bottom: -150px;
+    left: -300px;
     background: #a7dfd9;
     border-radius: 46% 54% 0 0;
     transform: rotate(-6deg);
+}
+
+/* ============ PANEL IZQUIERDO ============ */
+.brand-panel {
+    position: relative;
+    z-index: 1;
+    /* height y no min-height: el panel se ajusta a la ventana y el contenido
+       se comprime, en vez de crecer y empujar los beneficios de abajo fuera de
+       la pantalla. Con min-height, en ventanas bajas habia que hacer scroll
+       solo para ver "Helados de calidad". */
+    height: 100vh;
+    padding: 24px 38px 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    overflow: hidden;
 }
 
 .brand-content,
@@ -331,16 +302,16 @@ const submitLogin = async () => {
 }
 
 .logo-icon {
-    width: 92px;
-    height: 104px;
-    margin-bottom: 8px;
+    width: 74px;
+    height: 84px;
+    margin-bottom: 6px;
     filter: drop-shadow(0 4px 2px rgba(35, 107, 115, 0.12));
 }
 
 /* ============ LOGO Y NOMBRE ============ */
 .brand-name {
     font-family: Pacifico, 'Brush Script MT', 'Segoe Script', cursive;
-    font-size: clamp(40px, 4.4vw, 64px);
+    font-size: clamp(34px, 3.6vw, 52px);
     font-weight: 400;
     font-style: italic;
     color: #1a4a52;
@@ -350,12 +321,12 @@ const submitLogin = async () => {
 }
 
 .brand-subtitle {
-    font-size: 20px;
+    font-size: 18px;
     line-height: 1.4;
     color: #1f4e57;
     font-weight: 500;
     text-align: center;
-    margin-top: 12px;
+    margin-top: 8px;
 }
 
 .heart-divider {
@@ -376,12 +347,16 @@ const submitLogin = async () => {
 /* ============ ZONA DE ILUSTRACIONES ============ */
 .illustration-area {
     width: 100%;
-    min-height: 330px;
-    display: grid;
-    grid-template-columns: 1.15fr 1fr;
+    /* min-height: 0 + flex: 1 deja que el vaso se encoja en vez de empujar. */
+    min-height: 0;
+    flex: 1 1 auto;
+    display: flex;
     align-items: center;
-    gap: 5px;
-    margin-top: 18px;
+    justify-content: center;
+    /* Contenedor propio con overflow escondido: los corazones decorativos se
+       posicionan en porcentajes y antes se salían de la caja. */
+    overflow: hidden;
+    margin-top: 14px;
 }
 
 .icecream-art {
@@ -389,76 +364,31 @@ const submitLogin = async () => {
     display: flex;
     justify-content: center;
     align-items: center;
+    /* Ancho acotado al del vaso. Antes esta caja tomaba todo el ancho del
+       panel, y los corazones decorativos, que se posicionan en porcentajes
+       respecto de ella, quedaban lejos del vaso, casi en el borde de la
+       pantalla. */
+    width: 100%;
+    max-width: 300px;
     min-width: 0;
+    min-height: 0;
 }
 
 .cup-art {
     width: 100%;
     max-width: 300px;
-}
-
-/* Corazones y trazos sueltos alrededor del vaso */
-.doodle {
-    position: absolute;
+    max-height: 100%;
     display: flex;
-    line-height: 0;
-}
-
-.doodle-heart-left {
-    left: -2%;
-    top: 26%;
-}
-
-.doodle-dash-left {
-    left: 6%;
-    top: 6%;
-    width: 26px;
-    height: 5px;
-    border-radius: 3px;
-    background: #4ba9a6;
-    transform: rotate(-38deg);
-}
-
-.doodle-dash-left-2 {
-    left: 1%;
-    top: 13%;
-    width: 18px;
-    height: 4px;
-    border-radius: 2px;
-    background: #4ba9a6;
-    transform: rotate(-38deg);
-}
-
-.doodle-heart-right {
-    right: -2%;
-    top: 20%;
-}
-
-/* Mensaje decorativo */
-.welcome-note {
-    font-family: Caveat, 'Brush Script MT', 'Segoe Script', cursive;
-    font-size: 30px;
-    line-height: 1.18;
-    font-style: italic;
-    color: #1f4e57;
-    transform: rotate(-6deg);
-    text-align: center;
-    padding: 10px;
-}
-
-.note-hearts {
-    display: flex;
-    align-items: center;
     justify-content: center;
-    gap: 8px;
-    margin-top: 12px;
+    align-items: center;
+    min-height: 0;
 }
 
-.note-bar {
-    width: 30px;
-    height: 4px;
-    border-radius: 2px;
-    background: #4ba9a6;
+.cup-art :deep(svg) {
+    max-height: 100%;
+    max-width: 100%;
+    height: auto;
+    width: auto;
 }
 
 /* ============ BENEFICIOS INFERIORES ============ */
@@ -469,8 +399,9 @@ const submitLogin = async () => {
     justify-content: space-between;
     align-items: center;
     gap: 10px;
-    margin-top: 20px;
-    padding-bottom: 5px;
+    margin-top: 14px;
+    padding-bottom: 2px;
+    flex-shrink: 0;
 }
 
 .feature {
@@ -490,13 +421,14 @@ const submitLogin = async () => {
 
 /* ============ PANEL DERECHO ============ */
 .form-panel {
-    min-height: 100vh;
-    padding: 30px;
+    height: 100vh;
+    padding: 24px;
     display: flex;
     align-items: center;
     justify-content: center;
     position: relative;
     z-index: 1;
+    overflow: hidden;
 }
 
 .login-card {
@@ -750,34 +682,14 @@ const submitLogin = async () => {
     color: #a74635;
 }
 
-/* ============ DECORACIONES ============ */
-.top-note {
-    position: absolute;
-    top: 28px;
-    right: 28px;
-    font-family: Caveat, 'Brush Script MT', cursive;
-    color: #236b73;
-    font-size: 14px;
-    transform: rotate(-8deg);
-    text-align: center;
-}
-
 /* ============ RESPONSIVE ============ */
 @media (max-width: 1000px) {
     .brand-panel {
-        padding: 30px 20px;
+        padding: 20px;
     }
 
     .form-panel {
         padding: 20px;
-    }
-
-    .illustration-area {
-        grid-template-columns: 1fr;
-    }
-
-    .welcome-note {
-        display: none;
     }
 
     .icecream-art {
@@ -795,17 +707,13 @@ const submitLogin = async () => {
     }
 
     .form-panel {
-        min-height: 100vh;
+        height: 100vh;
         padding: 22px 15px;
     }
 
     .login-card {
         max-width: 430px;
         padding: 30px 20px;
-    }
-
-    .top-note {
-        display: none;
     }
 }
 

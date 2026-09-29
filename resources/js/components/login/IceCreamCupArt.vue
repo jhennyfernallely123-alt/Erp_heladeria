@@ -1,141 +1,194 @@
 <template>
-    <!-- VasoDetailed: like the reference, with drip, sprinkles, wafer and outlined heart -->
-    <svg viewBox="0 0 260 300" class="h-full w-full" role="img" aria-label="Ice cream cup with three flavors, wafer and sprinkles">
+    <svg
+        viewBox="0 0 320 344"
+        class="h-full w-full"
+        role="img"
+        aria-label="Galera de helado con crema, fresas, arándanos, moras y hoja de menta"
+    >
         <defs>
-            <linearGradient id="cupTeal" x1="0.1" y1="0" x2="0.9" y2="1">
-                <stop offset="0%" stop-color="#6FC9C1" />
-                <stop offset="55%" stop-color="#4EB3AB" />
-                <stop offset="100%" stop-color="#3AA098" />
-            </linearGradient>
-            <radialGradient id="scoopChoc" cx="0.35" cy="0.28" r="0.85">
-                <stop offset="0%" stop-color="#8A6244" />
-                <stop offset="100%" stop-color="#5E3D2A" />
-            </radialGradient>
-            <radialGradient id="scoopFresa" cx="0.35" cy="0.25" r="0.9">
-                <stop offset="0%" stop-color="#F7B3BA" />
-                <stop offset="100%" stop-color="#E68E9A" />
-            </radialGradient>
-            <radialGradient id="scoopVainilla" cx="0.35" cy="0.28" r="0.9">
-                <stop offset="0%" stop-color="#FBEED2" />
-                <stop offset="100%" stop-color="#EFD6A8" />
-            </radialGradient>
-            <linearGradient id="waferGrad" x1="0" y1="0" x2="1" y2="0">
-                <stop offset="0%" stop-color="#E0AE6C" />
-                <stop offset="100%" stop-color="#C08E4E" />
-            </linearGradient>
+            <clipPath id="galeraClip">
+                <path d="M56 176 L112 310 Q160 336 208 310 L264 176 Z" />
+            </clipPath>
         </defs>
 
-        <!-- Sombra en el piso -->
-        <ellipse cx="132" cy="288" rx="86" ry="9" fill="#1F4E57" opacity="0.10" />
-
         <!-- ============================================================
-             GALERA CLAVADA A LA IZQUIERDA
+             HOJAS Y FRUTOS DEL FONDO (detras del helado)
              ============================================================ -->
-        <g transform="rotate(-32 62 96)">
-            <path d="M50 28h24v128a12 12 0 0 1-24 0z" fill="url(#waferGrad)" />
-            <g fill="#A9793F" opacity="0.55">
-                <rect x="51" y="46" width="22" height="5" rx="2.5" />
-                <rect x="51" y="66" width="22" height="5" rx="2.5" />
-                <rect x="51" y="86" width="22" height="5" rx="2.5" />
-                <rect x="51" y="106" width="22" height="5" rx="2.5" />
-                <rect x="51" y="126" width="22" height="5" rx="2.5" />
+
+        <!-- Hoja de menta izquierda -->
+        <g transform="translate(104 66) rotate(-22)">
+            <path
+                d="M0 0 L-10 -16 L-20 -6 L-30 -18 L-32 -2 L-20 4 L-26 16 L-10 12 L-4 24 L4 12 L18 18 L18 4 L30 -2 L24 -18 L12 -12 L8 -26 Z"
+                fill="#4CAF50"
+                stroke="#1F2937"
+                stroke-width="3.5"
+                stroke-linejoin="round"
+            />
+            <path d="M-2 2 L2 20" stroke="#1F2937" stroke-width="2.5" stroke-linecap="round" fill="none" />
+        </g>
+
+        <!-- Mora (arandano negro) derecha -->
+        <g transform="translate(214 78)">
+            <g fill="#3B2A4A" stroke="#1F2937" stroke-width="3">
+                <circle cx="0" cy="0" r="9" />
+                <circle cx="-11" cy="6" r="8.5" />
+                <circle cx="11" cy="6" r="8.5" />
+                <circle cx="-6" cy="-9" r="8" />
+                <circle cx="7" cy="-9" r="8" />
+                <circle cx="0" cy="12" r="8" />
             </g>
-            <ellipse cx="62" cy="30" rx="12" ry="7" fill="#E7BC80" />
+            <circle cx="-4" cy="-4" r="2.4" fill="#7A6A94" />
+            <circle cx="4" cy="3" r="2" fill="#7A6A94" opacity="0.7" />
+        </g>
+
+        <!-- Arandano pequeno izquierda -->
+        <g transform="translate(88 104)">
+            <circle r="10" fill="#4A5FA5" stroke="#1F2937" stroke-width="3.5" />
+            <path
+                d="M0 -4 L3.4 -0.6 L-3.4 -0.6 Z"
+                fill="#1F2937"
+                stroke="#1F2937"
+                stroke-width="1.6"
+                stroke-linejoin="round"
+            />
+            <circle cx="-3.4" cy="-3.4" r="2" fill="#9FB2E8" opacity="0.85" />
         </g>
 
         <!-- ============================================================
-             BOLAS DE HELADO (de atras hacia adelante)
+             HELADO: CREMA CON VOLUTAS
              ============================================================ -->
 
-        <!-- Chocolate (izquierda) -->
+        <!-- Voluta inferior (la mas ancha) -->
         <path
-            d="M44 178c-14-16-14-44 2-58 12-11 30-11 42 0 16 14 16 42 2 58-11 12-34 12-46 0z"
-            fill="url(#scoopChoc)"
-        />
-        <!-- Vainilla (derecha) -->
-        <path
-            d="M150 176c-13-15-13-42 2-55 12-11 29-11 40 0 15 13 15 40 2 55-11 11-33 11-44 0z"
-            fill="url(#scoopVainilla)"
-        />
-        <!-- Fresa (centro, arriba) -->
-        <path
-            d="M78 122c-16-16-16-46 2-62 14-13 34-13 48 0 18 16 18 46 2 62-13 13-39 13-52 0z"
-            fill="url(#scoopFresa)"
-        />
-
-        <!-- Brillos -->
-        <ellipse cx="94" cy="84" rx="16" ry="10" fill="#FFFFFF" opacity="0.30" transform="rotate(-24 94 84)" />
-        <ellipse cx="60" cy="140" rx="12" ry="8" fill="#FFFFFF" opacity="0.18" transform="rotate(-24 60 140)" />
-        <ellipse cx="166" cy="140" rx="12" ry="8" fill="#FFFFFF" opacity="0.34" transform="rotate(-24 166 140)" />
-
-        <!-- ============================================================
-             CHORRO DE CHOCOLATE sobre la bola de fresa
-             ============================================================ -->
-        <path
-            d="M80 74c4 6 8 4 12 10s8 4 12 10 8 4 12 10"
-            fill="none"
-            stroke="#4A2C1C"
-            stroke-width="7"
-            stroke-linecap="round"
-        />
-        <path
-            d="M84 132c6 2 8 8 6 14-1 5-7 6-9 2-2-5 0-14 3-16z"
-            fill="#4A2C1C"
-        />
-        <path
-            d="M120 140c6 3 7 9 4 15-2 4-8 4-9 0-1-5 2-13 5-15z"
-            fill="#4A2C1C"
-        />
-        <path
-            d="M102 120c5 3 6 8 3 13-2 4-7 4-8 0-1-4 2-11 5-13z"
-            fill="#4A2C1C"
-        />
-
-        <!-- ============================================================
-             CHISPAS DE COLORES
-             ============================================================ -->
-        <g>
-            <!-- Fresa -->
-            <rect x="88" y="76" width="9" height="4" rx="2" fill="#F5A623" transform="rotate(28 92 78)" />
-            <rect x="108" y="70" width="9" height="4" rx="2" fill="#4CAF50" transform="rotate(-34 112 72)" />
-            <rect x="128" y="86" width="9" height="4" rx="2" fill="#E8453C" transform="rotate(52 132 88)" />
-            <rect x="74" y="98" width="9" height="4" rx="2" fill="#FFFFFF" transform="rotate(-18 78 100)" />
-            <rect x="100" y="96" width="9" height="4" rx="2" fill="#4FC3F7" transform="rotate(70 104 98)" />
-            <rect x="120" y="108" width="9" height="4" rx="2" fill="#F5A623" transform="rotate(-48 124 110)" />
-            <!-- Chocolate -->
-            <rect x="46" y="132" width="9" height="4" rx="2" fill="#E8453C" transform="rotate(34 50 134)" />
-            <rect x="70" y="126" width="9" height="4" rx="2" fill="#4FC3F7" transform="rotate(-40 74 128)" />
-            <rect x="56" y="160" width="9" height="4" rx="2" fill="#4CAF50" transform="rotate(62 60 162)" />
-            <rect x="34" y="152" width="9" height="4" rx="2" fill="#F5A623" transform="rotate(-22 38 154)" />
-            <!-- Vainilla -->
-            <rect x="154" y="128" width="9" height="4" rx="2" fill="#E8453C" transform="rotate(-36 158 130)" />
-            <rect x="182" y="136" width="9" height="4" rx="2" fill="#4CAF50" transform="rotate(46 186 138)" />
-            <rect x="166" y="160" width="9" height="4" rx="2" fill="#4FC3F7" transform="rotate(-16 170 162)" />
-            <rect x="192" y="120" width="9" height="4" rx="2" fill="#F5A623" transform="rotate(58 196 122)" />
-        </g>
-
-        <!-- ============================================================
-             VASO
-             ============================================================ -->
-        <path
-            d="M42 168h176l-16 96a16 16 0 0 1-15.6 12.4H73.6A16 16 0 0 1 58 264z"
-            fill="url(#cupTeal)"
-        />
-        <!-- Borde superior del vaso -->
-        <ellipse cx="130" cy="168" rx="88" ry="15" fill="#8FD9D2" />
-        <ellipse cx="130" cy="170" rx="76" ry="10" fill="#2F8A83" opacity="0.28" />
-        <!-- Brillo lateral -->
-        <path d="M60 182l11 82a6 6 0 0 1-6 6.6z" fill="#FFFFFF" opacity="0.26" />
-        <!-- Sombra interior derecha -->
-        <path d="M200 182l-13 82a6 6 0 0 0 6 6.6z" fill="#1F4E57" opacity="0.10" />
-
-        <!-- Corazon blanco con contorno -->
-        <path
-            d="M130 250c-2-2.2-27-19.6-27-35.8 0-9.4 7.4-16.2 16.6-16.2 5.7 0 10.8 2.8 13.6 7.2 2.8-4.4 7.9-7.2 13.6-7.2 9.2 0 16.6 6.8 16.6 16.2 0 16.2-25 33.6-27 35.8z"
-            fill="none"
-            stroke="#FFFFFF"
-            stroke-width="9"
+            d="M64 178
+               c-2 -24 16 -42 40 -38
+               c6 -22 40 -28 58 -8
+               c14 -20 48 -18 58 10
+               c22 -6 42 10 40 30
+               c0 6 -6 8 -16 8
+               l-164 0
+               c-10 0 -14 -1 -16 -2z"
+            fill="#FFF8E7"
+            stroke="#1F2937"
+            stroke-width="4"
             stroke-linejoin="round"
         />
+
+        <!-- Voluta del medio -->
+        <path
+            d="M88 142
+               c-2 -20 14 -34 34 -31
+               c6 -18 34 -22 48 -6
+               c12 -16 40 -14 48 8
+               c18 -4 34 8 32 24
+               c0 5 -5 7 -13 7
+               l-136 0
+               c-8 0 -12 -1 -13 -2z"
+            fill="#FFF8E7"
+            stroke="#1F2937"
+            stroke-width="4"
+            stroke-linejoin="round"
+        />
+
+        <!-- Voluta superior con la punta curl -->
+        <path
+            d="M112 108
+               c-1 -17 12 -28 29 -25
+               c5 -16 30 -19 41 -4
+               c11 -13 34 -11 40 7
+               c15 -3 28 7 26 20
+               c0 4 -4 6 -11 6
+               l-112 0
+               c-7 0 -11 -2 -13 -4z"
+            fill="#FFF8E7"
+            stroke="#1F2937"
+            stroke-width="4"
+            stroke-linejoin="round"
+        />
+
+        <!-- Punta de la voluta -->
+        <path
+            d="M196 112 c14 -2 26 -10 30 -22 c3 -9 -2 -17 -10 -18 c-8 -1 -14 5 -14 13 c0 6 4 10 9 11"
+            fill="#FFF8E7"
+            stroke="#1F2937"
+            stroke-width="4"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+        />
+
+        <!-- ============================================================
+             FRUTOS DEL FRENTE
+             ============================================================ -->
+
+        <!-- Fresa central -->
+        <g transform="translate(160 92) rotate(8)">
+            <path
+                d="M0 24 C-11 15 -14 2 -8 -5 C-4 -10 4 -10 8 -5 C14 2 11 15 0 24 Z"
+                fill="#E23B4A"
+                stroke="#1F2937"
+                stroke-width="3.5"
+                stroke-linejoin="round"
+            />
+            <!-- Calizulo -->
+            <path
+                d="M-11 -6 L-4 -9 L-1 -14 L3 -9 L11 -6 L3 -3 L-3 -3 Z"
+                fill="#4CAF50"
+                stroke="#1F2937"
+                stroke-width="3"
+                stroke-linejoin="round"
+            />
+            <!-- Semillas -->
+            <g fill="#FFE082">
+                <ellipse cx="-4" cy="4" rx="1.5" ry="2.2" />
+                <ellipse cx="4" cy="4" rx="1.5" ry="2.2" />
+                <ellipse cx="0" cy="12" rx="1.5" ry="2.2" />
+                <ellipse cx="-5" cy="13" rx="1.4" ry="2" />
+                <ellipse cx="5" cy="13" rx="1.4" ry="2" />
+            </g>
+            <path d="M-6 0 C-4 -3 -1 -3 0 0" fill="#FFFFFF" opacity="0.35" />
+        </g>
+
+        <!-- Arandano derecho -->
+        <g transform="translate(206 118)">
+            <circle r="11" fill="#4A5FA5" stroke="#1F2937" stroke-width="3.5" />
+            <path d="M0 -4.6 L3.8 -0.7 L-3.8 -0.7 Z" fill="#1F2937" stroke="#1F2937" stroke-width="1.8" stroke-linejoin="round" />
+            <circle cx="-4" cy="-4" r="2.2" fill="#9FB2E8" opacity="0.85" />
+        </g>
+
+        <!-- ============================================================
+             GALERA DE WAFFLE
+             ============================================================ -->
+
+        <!-- Cuerpo de la galera -->
+        <path
+            d="M56 176 L112 310 Q160 336 208 310 L264 176 Z"
+            fill="#C08457"
+            stroke="#1F2937"
+            stroke-width="4.5"
+            stroke-linejoin="round"
+        />
+
+        <!-- Trama de waffle, recortada dentro de la galera -->
+        <g clip-path="url(#galeraClip)" stroke="#8A5A34" stroke-width="5" opacity="0.9">
+            <path d="M20 140 L240 340" />
+            <path d="M-10 190 L210 390" />
+            <path d="M60 120 L280 320" />
+            <path d="M110 100 L330 300" />
+            <path d="M300 140 L80 340" />
+            <path d="M330 190 L110 390" />
+            <path d="M260 120 L40 320" />
+            <path d="M210 100 L-10 300" />
+        </g>
+
+        <!-- Borde superior de la galera -->
+        <path
+            d="M56 176 L264 176"
+            stroke="#1F2937"
+            stroke-width="4.5"
+            stroke-linecap="round"
+        />
+
+        <!-- Brillo lateral -->
+        <path d="M74 186 L116 306 a8 8 0 0 1 -8 6z" fill="#FFFFFF" opacity="0.16" />
     </svg>
 </template>
